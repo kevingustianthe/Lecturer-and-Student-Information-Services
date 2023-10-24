@@ -8,6 +8,7 @@ public class RestfulapiApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(RestfulapiApplication.class, args);
+		System.out.println("==== Started ====");
 	}
 
 }
