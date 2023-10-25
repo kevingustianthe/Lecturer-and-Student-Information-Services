@@ -32,6 +32,10 @@ public class UserArgumentResolver implements HandlerMethodArgumentResolver {
         Account account = accountRepository.findFirstByToken(token)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Unauthorized"));
 
+        if (!account.getStatus()) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Account not verified");
+        }
+
         if (account.getTokenExpiredAt() < System.currentTimeMillis()) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Unauthorized");
         }
