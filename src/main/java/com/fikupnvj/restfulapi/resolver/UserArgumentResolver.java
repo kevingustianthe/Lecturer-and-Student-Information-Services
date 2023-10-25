@@ -37,7 +37,7 @@ public class UserArgumentResolver implements HandlerMethodArgumentResolver {
         }
 
         if (account.getTokenExpiredAt() < System.currentTimeMillis()) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Unauthorized");
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Token expired");
         }
 
         return account;

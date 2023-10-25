@@ -34,7 +34,7 @@ public class AdminArgumentResolver implements HandlerMethodArgumentResolver {
         String token = servletRequest.getHeader("X-API-TOKEN");
 
         if (token == null) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Unauthorized");
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Token not found");
         }
 
         Account account = accountRepository.findFirstByToken(token)
@@ -45,11 +45,11 @@ public class AdminArgumentResolver implements HandlerMethodArgumentResolver {
         }
 
         if (account.getTokenExpiredAt() < System.currentTimeMillis()) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Unauthorized");
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Token expired");
         }
 
         if (!Objects.equals(account.getRole(), "ADMIN")) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Unauthorized");
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Account doesn't have access");
         }
 
         return account;
