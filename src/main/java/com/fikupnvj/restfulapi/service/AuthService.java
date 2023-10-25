@@ -2,8 +2,8 @@ package com.fikupnvj.restfulapi.service;
 
 import com.fikupnvj.restfulapi.entity.Account;
 import com.fikupnvj.restfulapi.model.LoginRequest;
-import com.fikupnvj.restfulapi.model.ResponseData;
-import com.fikupnvj.restfulapi.model.TokenData;
+import com.fikupnvj.restfulapi.model.ApiResponse;
+import com.fikupnvj.restfulapi.model.TokenResponse;
 import com.fikupnvj.restfulapi.repository.AccountRepository;
 import com.fikupnvj.restfulapi.tool.BCrypt;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +20,7 @@ public class AuthService {
     @Autowired
     private AccountRepository accountRepository;
 
-    public ResponseData<Account> register(Account request) {
+    public ApiResponse<Account> register(Account request) {
         try {
             if (accountRepository.existsById(request.getEmail())) {
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Email already registered");
@@ -34,13 +34,13 @@ public class AuthService {
             request.setVerificationCode(UUID.randomUUID().toString());
 
             accountRepository.save(request);
-            return new ResponseData<>(true, "Account created successfully", null);
+            return new ApiResponse<>(true, "Account created successfully", null);
         } catch (Exception e) {
-            return new ResponseData<>(false, e.getMessage(), null);
+            return new ApiResponse<>(false, e.getMessage(), null);
         }
     }
 
-    public ResponseData<TokenData> login (LoginRequest request) {
+    public ApiResponse<TokenResponse> login (LoginRequest request) {
         try {
             Account account = accountRepository.findById(request.getEmail())
                     .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Email or password invalid"));
@@ -50,17 +50,17 @@ public class AuthService {
                 account.setTokenExpiredAt(System.currentTimeMillis() + (60 * 60 * 1000));
                 accountRepository.save(account);
 
-                return new ResponseData<>(true, "Login Success", new TokenData(account.getToken(), account.getTokenExpiredAt()));
+                return new ApiResponse<>(true, "Login Success", new TokenResponse(account.getToken(), account.getTokenExpiredAt()));
             } else {
                 throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Account not verified");
             }
         } catch (Exception e) {
-            return new ResponseData<>(false, e.getMessage(), null);
+            return new ApiResponse<>(false, e.getMessage(), null);
         }
 
     }
 
-    public ResponseData<Account> verify(String email, String code) {
+    public ApiResponse<Account> verify(String email, String code) {
         try {
             Account account = accountRepository.findById(email)
                     .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Account not found"));
@@ -73,9 +73,9 @@ public class AuthService {
             account.setVerificationCode(null);
             accountRepository.save(account);
 
-            return new ResponseData<>(true, "Account successfully verified", null);
+            return new ApiResponse<>(true, "Account successfully verified", null);
         } catch (Exception e) {
-            return new ResponseData<>(false, e.getMessage(), null);
+            return new ApiResponse<>(false, e.getMessage(), null);
         }
 
     }

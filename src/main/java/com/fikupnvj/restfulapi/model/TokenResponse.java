@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class TokenData {
+public class TokenResponse {
     private String token;
     private Long expiredAt;
 }
