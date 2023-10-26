@@ -74,7 +74,7 @@ public class AuthService {
                     .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Account not found"));
 
             if (!Objects.equals(account.getVerificationCode(), code)) {
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Account not found");
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid verification code");
             }
 
             account.setStatus(true);
