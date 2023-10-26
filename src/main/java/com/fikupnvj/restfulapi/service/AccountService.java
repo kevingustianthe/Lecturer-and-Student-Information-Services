@@ -34,7 +34,7 @@ public class AccountService {
         return new ApiResponse<>(true, "Account successfully retrieved", accountResponses);
     }
 
-    public ApiResponse<AccountResponse> getCurrent(Account account) {
+    public ApiResponse<AccountResponse> getMe(Account account) {
         AccountResponse accountResponse = toResponseAccount(account);
 
         return new ApiResponse<>(true, "Account successfully retrieved", accountResponse);

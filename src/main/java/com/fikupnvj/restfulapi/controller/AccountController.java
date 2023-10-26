@@ -23,8 +23,8 @@ public class AccountController {
     }
 
     @GetMapping("/me")
-    public ApiResponse<AccountResponse> getCurrent(Account account) {
-        return accountService.getCurrent(account);
+    public ApiResponse<AccountResponse> getMe(Account account) {
+        return accountService.getMe(account);
     }
 
     @PostMapping("/find")
