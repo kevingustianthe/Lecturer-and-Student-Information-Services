@@ -29,6 +29,10 @@ public class AuthService {
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Email already registered");
             }
 
+            if (!emailService.checkValidEmail(request.getEmail())) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid email address");
+            }
+
             request.setPassword(BCrypt.hashpw(request.getPassword(), BCrypt.gensalt()));
             if (request.getRole() == null) {
                 request.setRole("USER");

@@ -9,6 +9,9 @@ import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 @Service
 public class EmailService {
 
@@ -48,5 +51,12 @@ public class EmailService {
         } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
         }
+    }
+
+    public boolean checkValidEmail(String email) {
+        String emailPattern = "^[a-z0-9_+&*-]+(?:\\.[a-z0-9_+&*-]+)*@(upnvj\\.ac\\.id|mahasiswa\\.upnvj\\.ac\\.id)$";
+        Pattern p = Pattern.compile(emailPattern);
+        Matcher m = p.matcher(email);
+        return m.matches();
     }
 }
