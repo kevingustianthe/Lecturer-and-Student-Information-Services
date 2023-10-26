@@ -20,6 +20,9 @@ public class AuthService {
     @Autowired
     private AccountRepository accountRepository;
 
+    @Autowired
+    private EmailService emailService;
+
     public ApiResponse<Account> register(Account request) {
         try {
             if (accountRepository.existsById(request.getEmail())) {
@@ -33,8 +36,9 @@ public class AuthService {
             request.setStatus(false);
             request.setVerificationCode(UUID.randomUUID().toString());
 
+            emailService.sendVerificationEmail(request);
             accountRepository.save(request);
-            return new ApiResponse<>(true, "Account created successfully", null);
+            return new ApiResponse<>(true, "Account created successfully. Check your email to verify your account", null);
         } catch (Exception e) {
             return new ApiResponse<>(false, e.getMessage(), null);
         }
