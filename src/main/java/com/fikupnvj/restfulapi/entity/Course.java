@@ -9,8 +9,8 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "tb_m_subject")
-public class Subject {
+@Table(name = "tb_m_course")
+public class Course {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
