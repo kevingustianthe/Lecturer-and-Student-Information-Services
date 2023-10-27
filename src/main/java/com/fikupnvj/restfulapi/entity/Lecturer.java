@@ -1,6 +1,7 @@
 package com.fikupnvj.restfulapi.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -44,4 +45,8 @@ public class Lecturer {
     @OneToOne
     @JoinColumn(referencedColumnName = "email")
     private Account account;
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "lecturer")
+    private List<CourseSchedule> courseSchedules;
 }

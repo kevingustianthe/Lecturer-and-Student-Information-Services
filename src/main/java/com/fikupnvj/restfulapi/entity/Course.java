@@ -1,9 +1,12 @@
 package com.fikupnvj.restfulapi.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.util.List;
 
 @Entity
 @Data
@@ -24,4 +27,8 @@ public class Course {
 
     @Column(name = "study_program", nullable = false)
     private String studyProgram;
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "course")
+    private List<CourseSchedule> courseSchedules;
 }

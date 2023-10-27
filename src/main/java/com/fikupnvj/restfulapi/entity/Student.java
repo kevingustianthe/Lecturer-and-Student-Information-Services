@@ -8,6 +8,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Entity
 @Data
 @AllArgsConstructor
@@ -43,4 +45,8 @@ public class Student {
     @OneToOne
     @JoinColumn(referencedColumnName = "email")
     private Account account;
+
+    @JsonIgnore
+    @ManyToMany(mappedBy = "students")
+    private List<CourseSchedule> courseSchedules;
 }
