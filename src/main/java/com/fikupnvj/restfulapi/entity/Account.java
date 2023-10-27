@@ -1,5 +1,7 @@
 package com.fikupnvj.restfulapi.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -29,4 +31,7 @@ public class Account {
 
     @Column(name = "token_expired_at")
     private Long tokenExpiredAt;
+
+    @OneToOne(mappedBy = "account")
+    private Student student;
 }
