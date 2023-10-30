@@ -7,6 +7,7 @@ import com.fikupnvj.restfulapi.entity.LecturerActivity;
 import com.fikupnvj.restfulapi.model.ApiResponse;
 import com.fikupnvj.restfulapi.model.LecturerActivityResponse;
 import com.fikupnvj.restfulapi.model.LecturerCourseScheduleResponse;
+import com.fikupnvj.restfulapi.model.LecturerResponse;
 import com.fikupnvj.restfulapi.repository.LecturerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -41,6 +42,27 @@ public class LecturerService {
         }
 
         return new ApiResponse<>(true, "Data successfully retrieved", lecturer);
+    }
+
+    public ApiResponse<LecturerResponse> getById(String id) {
+        Lecturer lecturer = findById(id);
+
+        List<CourseSchedule> courseSchedules = lecturer.getCourseSchedules();
+        List<LecturerCourseScheduleResponse> lecturerCourseSchedules = new ArrayList<>();
+        for (CourseSchedule courseSchedule : courseSchedules) {
+            LecturerCourseScheduleResponse lecturerCourseSchedule = toLecturerCourseScheduleResponse(courseSchedule);
+            lecturerCourseSchedules.add(lecturerCourseSchedule);
+        }
+
+        List<LecturerActivity> activities = lecturer.getLecturerActivities();
+        List<LecturerActivityResponse> lecturerActivities = new ArrayList<>();
+        for (LecturerActivity activity : activities) {
+            LecturerActivityResponse lecturerActivity = toLecturerActivityResponse(activity);
+            lecturerActivities.add(lecturerActivity);
+        }
+
+        LecturerResponse lecturerResponse = new LecturerResponse(lecturer, lecturerCourseSchedules, lecturerActivities);
+        return new ApiResponse<>(true, "Data", lecturerResponse);
     }
 
     public ApiResponse<List<LecturerActivityResponse>> getLecturerActivity(String id) {
