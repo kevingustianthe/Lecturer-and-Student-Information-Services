@@ -1,10 +1,12 @@
 package com.fikupnvj.restfulapi.service;
 
 import com.fikupnvj.restfulapi.entity.Account;
+import com.fikupnvj.restfulapi.entity.CourseSchedule;
 import com.fikupnvj.restfulapi.entity.Lecturer;
 import com.fikupnvj.restfulapi.entity.LecturerActivity;
 import com.fikupnvj.restfulapi.model.ApiResponse;
 import com.fikupnvj.restfulapi.model.LecturerActivityResponse;
+import com.fikupnvj.restfulapi.model.LecturerCourseScheduleResponse;
 import com.fikupnvj.restfulapi.repository.LecturerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -54,6 +56,19 @@ public class LecturerService {
         return new ApiResponse<>(true, "Data", lecturerActivities);
     }
 
+    public ApiResponse<List<LecturerCourseScheduleResponse>> getLecturerCourseSchedule(String id) {
+        Lecturer lecturer = findById(id);
+        List<CourseSchedule> courseSchedules = lecturer.getCourseSchedules();
+
+        List<LecturerCourseScheduleResponse> lecturerCourseSchedules = new ArrayList<>();
+        for (CourseSchedule courseSchedule : courseSchedules) {
+            LecturerCourseScheduleResponse lecturerCourseSchedule = toLecturerCourseScheduleResponse(courseSchedule);
+            lecturerCourseSchedules.add(lecturerCourseSchedule);
+        }
+
+        return new ApiResponse<>(true, "Data", lecturerCourseSchedules);
+    }
+
     public ApiResponse<Lecturer> create(Lecturer lecturer) {
         lecturerRepository.save(lecturer);
         return new ApiResponse<>(true, "Lecturer data has been successfully added", lecturer);
@@ -83,5 +98,22 @@ public class LecturerService {
         lecturerActivityResponse.setUpdateAt(lecturerActivity.getUpdateAt());
 
         return lecturerActivityResponse;
+    }
+
+    public LecturerCourseScheduleResponse toLecturerCourseScheduleResponse(CourseSchedule courseSchedule) {
+        LecturerCourseScheduleResponse lecturerCourseScheduleResponse = new LecturerCourseScheduleResponse();
+
+        lecturerCourseScheduleResponse.setId(courseSchedule.getId());
+        lecturerCourseScheduleResponse.setCourseName(courseSchedule.getCourse().getName());
+        lecturerCourseScheduleResponse.setCourseCredit(courseSchedule.getCourse().getCredit());
+        lecturerCourseScheduleResponse.setCourseStudyProgram(courseSchedule.getCourse().getStudyProgram());
+        lecturerCourseScheduleResponse.setSemester(courseSchedule.getSemester());
+        lecturerCourseScheduleResponse.setClassName(courseSchedule.getClassName());
+        lecturerCourseScheduleResponse.setRoom(courseSchedule.getRoom());
+        lecturerCourseScheduleResponse.setDay(courseSchedule.getDay());
+        lecturerCourseScheduleResponse.setStartTime(courseSchedule.getStartTime());
+        lecturerCourseScheduleResponse.setEndTime(courseSchedule.getEndTime());
+
+        return lecturerCourseScheduleResponse;
     }
 }

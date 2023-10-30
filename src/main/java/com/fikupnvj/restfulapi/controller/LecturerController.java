@@ -4,6 +4,7 @@ import com.fikupnvj.restfulapi.entity.Account;
 import com.fikupnvj.restfulapi.entity.Lecturer;
 import com.fikupnvj.restfulapi.model.ApiResponse;
 import com.fikupnvj.restfulapi.model.LecturerActivityResponse;
+import com.fikupnvj.restfulapi.model.LecturerCourseScheduleResponse;
 import com.fikupnvj.restfulapi.service.LecturerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -30,6 +31,11 @@ public class LecturerController {
     @GetMapping("/{id}/activity")
     public ApiResponse<List<LecturerActivityResponse>> getLecturerActivity(@PathVariable String id) {
         return lecturerService.getLecturerActivity(id);
+    }
+
+    @GetMapping("/{id}/course-schedule")
+    public ApiResponse<List<LecturerCourseScheduleResponse>> getLecturerCourseSchedule(@PathVariable String id) {
+        return lecturerService.getLecturerCourseSchedule(id);
     }
 
     @PostMapping
