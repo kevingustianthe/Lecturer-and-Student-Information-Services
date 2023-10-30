@@ -46,20 +46,8 @@ public class LecturerService {
 
     public ApiResponse<LecturerResponse> getById(String id) {
         Lecturer lecturer = findById(id);
-
-        List<CourseSchedule> courseSchedules = lecturer.getCourseSchedules();
-        List<LecturerCourseScheduleResponse> lecturerCourseSchedules = new ArrayList<>();
-        for (CourseSchedule courseSchedule : courseSchedules) {
-            LecturerCourseScheduleResponse lecturerCourseSchedule = toLecturerCourseScheduleResponse(courseSchedule);
-            lecturerCourseSchedules.add(lecturerCourseSchedule);
-        }
-
-        List<LecturerActivity> activities = lecturer.getLecturerActivities();
-        List<LecturerActivityResponse> lecturerActivities = new ArrayList<>();
-        for (LecturerActivity activity : activities) {
-            LecturerActivityResponse lecturerActivity = toLecturerActivityResponse(activity);
-            lecturerActivities.add(lecturerActivity);
-        }
+        List<LecturerCourseScheduleResponse> lecturerCourseSchedules = toListLecturerCourseScheduleResponse(lecturer.getCourseSchedules());
+        List<LecturerActivityResponse> lecturerActivities = toListLecturerActivityResponse(lecturer.getLecturerActivities());
 
         LecturerResponse lecturerResponse = new LecturerResponse(lecturer, lecturerCourseSchedules, lecturerActivities);
         return new ApiResponse<>(true, "Data", lecturerResponse);
@@ -67,26 +55,14 @@ public class LecturerService {
 
     public ApiResponse<List<LecturerActivityResponse>> getLecturerActivity(String id) {
         Lecturer lecturer = findById(id);
-        List<LecturerActivity> activities = lecturer.getLecturerActivities();
-
-        List<LecturerActivityResponse> lecturerActivities = new ArrayList<>();
-        for (LecturerActivity activity : activities) {
-            LecturerActivityResponse lecturerActivity = toLecturerActivityResponse(activity);
-            lecturerActivities.add(lecturerActivity);
-        }
+        List<LecturerActivityResponse> lecturerActivities = toListLecturerActivityResponse(lecturer.getLecturerActivities());
 
         return new ApiResponse<>(true, "Data", lecturerActivities);
     }
 
     public ApiResponse<List<LecturerCourseScheduleResponse>> getLecturerCourseSchedule(String id) {
         Lecturer lecturer = findById(id);
-        List<CourseSchedule> courseSchedules = lecturer.getCourseSchedules();
-
-        List<LecturerCourseScheduleResponse> lecturerCourseSchedules = new ArrayList<>();
-        for (CourseSchedule courseSchedule : courseSchedules) {
-            LecturerCourseScheduleResponse lecturerCourseSchedule = toLecturerCourseScheduleResponse(courseSchedule);
-            lecturerCourseSchedules.add(lecturerCourseSchedule);
-        }
+        List<LecturerCourseScheduleResponse> lecturerCourseSchedules = toListLecturerCourseScheduleResponse(lecturer.getCourseSchedules());
 
         return new ApiResponse<>(true, "Data", lecturerCourseSchedules);
     }
@@ -108,34 +84,40 @@ public class LecturerService {
         return new ApiResponse<>(true, "Lecturer data has been successfully deleted", lecturer);
     }
 
-    public LecturerActivityResponse toLecturerActivityResponse(LecturerActivity lecturerActivity) {
-        LecturerActivityResponse lecturerActivityResponse = new LecturerActivityResponse();
-
-        lecturerActivityResponse.setId(lecturerActivity.getId());
-        lecturerActivityResponse.setDescription(lecturerActivity.getDescription());
-        lecturerActivityResponse.setStatus(lecturerActivity.getStatus());
-        lecturerActivityResponse.setStartDate(lecturerActivity.getStartDate());
-        lecturerActivityResponse.setEndDate(lecturerActivity.getEndDate());
-        lecturerActivityResponse.setCreatedAt(lecturerActivity.getCreatedAt());
-        lecturerActivityResponse.setUpdateAt(lecturerActivity.getUpdateAt());
-
-        return lecturerActivityResponse;
+    public List<LecturerActivityResponse> toListLecturerActivityResponse(List<LecturerActivity> activities) {
+        List<LecturerActivityResponse> lecturerActivities = new ArrayList<>();
+        for (LecturerActivity activity : activities) {
+            LecturerActivityResponse lecturerActivity = new LecturerActivityResponse(
+                    activity.getId(),
+                    activity.getDescription(),
+                    activity.getStatus(),
+                    activity.getStartDate(),
+                    activity.getEndDate(),
+                    activity.getCreatedAt(),
+                    activity.getUpdateAt()
+            );
+            lecturerActivities.add(lecturerActivity);
+        }
+        return lecturerActivities;
     }
 
-    public LecturerCourseScheduleResponse toLecturerCourseScheduleResponse(CourseSchedule courseSchedule) {
-        LecturerCourseScheduleResponse lecturerCourseScheduleResponse = new LecturerCourseScheduleResponse();
-
-        lecturerCourseScheduleResponse.setId(courseSchedule.getId());
-        lecturerCourseScheduleResponse.setCourseName(courseSchedule.getCourse().getName());
-        lecturerCourseScheduleResponse.setCourseCredit(courseSchedule.getCourse().getCredit());
-        lecturerCourseScheduleResponse.setCourseStudyProgram(courseSchedule.getCourse().getStudyProgram());
-        lecturerCourseScheduleResponse.setSemester(courseSchedule.getSemester());
-        lecturerCourseScheduleResponse.setClassName(courseSchedule.getClassName());
-        lecturerCourseScheduleResponse.setRoom(courseSchedule.getRoom());
-        lecturerCourseScheduleResponse.setDay(courseSchedule.getDay());
-        lecturerCourseScheduleResponse.setStartTime(courseSchedule.getStartTime());
-        lecturerCourseScheduleResponse.setEndTime(courseSchedule.getEndTime());
-
-        return lecturerCourseScheduleResponse;
+    public List<LecturerCourseScheduleResponse> toListLecturerCourseScheduleResponse(List<CourseSchedule> courseSchedules) {
+        List<LecturerCourseScheduleResponse> lecturerCourseSchedules = new ArrayList<>();
+        for (CourseSchedule courseSchedule : courseSchedules) {
+            LecturerCourseScheduleResponse lecturerCourseSchedule = new LecturerCourseScheduleResponse(
+                    courseSchedule.getId(),
+                    courseSchedule.getCourse().getName(),
+                    courseSchedule.getCourse().getCredit(),
+                    courseSchedule.getCourse().getStudyProgram(),
+                    courseSchedule.getSemester(),
+                    courseSchedule.getClassName(),
+                    courseSchedule.getRoom(),
+                    courseSchedule.getDay(),
+                    courseSchedule.getStartTime(),
+                    courseSchedule.getEndTime()
+            );
+            lecturerCourseSchedules.add(lecturerCourseSchedule);
+        }
+        return lecturerCourseSchedules;
     }
 }
