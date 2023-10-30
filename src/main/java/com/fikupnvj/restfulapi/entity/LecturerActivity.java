@@ -55,4 +55,14 @@ public class LecturerActivity {
     protected void onUpdate() {
         updateAt = LocalDateTime.now();
     }
+
+    public void setStatus(LecturerActivity lecturerActivity) {
+        if (lecturerActivity.getStartDate().isAfter(LocalDate.now())) {
+            this.status = Status.Upcoming;
+        } else if (lecturerActivity.getEndDate().isBefore(LocalDate.now())) {
+            this.status = Status.Done;
+        } else {
+            this.status = Status.Ongoing;
+        }
+    }
 }

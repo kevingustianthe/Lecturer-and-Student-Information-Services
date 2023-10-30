@@ -35,14 +35,7 @@ public class LecturerActivityService {
         if (lecturerActivity.getStartDate().isAfter(lecturerActivity.getEndDate())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Start date can't be greater than end date");
         }
-
-        if (lecturerActivity.getStartDate().isAfter(LocalDate.now())) {
-            lecturerActivity.setStatus(LecturerActivity.Status.Upcoming);
-        } else if (lecturerActivity.getStartDate().equals(LocalDate.now())) {
-            lecturerActivity.setStatus(LecturerActivity.Status.Ongoing);
-        } else {
-            lecturerActivity.setStatus(LecturerActivity.Status.Done);
-        }
+        lecturerActivity.setStatus(lecturerActivity);
 
         return new ApiResponse<>(true, "Lecturer activity data has been successfully added", lecturerActivityRepository.save(lecturerActivity));
     }
@@ -50,14 +43,7 @@ public class LecturerActivityService {
     public ApiResponse<LecturerActivity> update(String id, LecturerActivity lecturerActivity) {
         findById(id);
         lecturerActivity.setId(id);
-
-        if (lecturerActivity.getStartDate().isAfter(LocalDate.now())) {
-            lecturerActivity.setStatus(LecturerActivity.Status.Upcoming);
-        } else if (lecturerActivity.getStartDate().equals(LocalDate.now())) {
-            lecturerActivity.setStatus(LecturerActivity.Status.Ongoing);
-        } else {
-            lecturerActivity.setStatus(LecturerActivity.Status.Done);
-        }
+        lecturerActivity.setStatus(lecturerActivity);
 
         return new ApiResponse<>(true, "Lecturer activity data has been successfully updated", lecturerActivityRepository.save(lecturerActivity));
     }
