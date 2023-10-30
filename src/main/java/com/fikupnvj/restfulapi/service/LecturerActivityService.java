@@ -32,9 +32,7 @@ public class LecturerActivityService {
     }
 
     public ApiResponse<LecturerActivity> create(LecturerActivity lecturerActivity) {
-        if (lecturerActivity.getStartDate().isAfter(lecturerActivity.getEndDate())) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Start date can't be greater than end date");
-        }
+        validateDate(lecturerActivity);
         lecturerActivity.setStatus(lecturerActivity);
 
         return new ApiResponse<>(true, "Lecturer activity data has been successfully added", lecturerActivityRepository.save(lecturerActivity));
@@ -43,6 +41,7 @@ public class LecturerActivityService {
     public ApiResponse<LecturerActivity> update(String id, LecturerActivity lecturerActivity) {
         findById(id);
         lecturerActivity.setId(id);
+        validateDate(lecturerActivity);
         lecturerActivity.setStatus(lecturerActivity);
 
         return new ApiResponse<>(true, "Lecturer activity data has been successfully updated", lecturerActivityRepository.save(lecturerActivity));
@@ -52,5 +51,11 @@ public class LecturerActivityService {
         LecturerActivity lecturerActivity = findById(id);
         lecturerActivityRepository.delete(lecturerActivity);
         return new ApiResponse<>(true, "Lecturer activity data has been successfully deleted", lecturerActivity);
+    }
+
+    public void validateDate(LecturerActivity lecturerActivity) {
+        if (lecturerActivity.getStartDate().isAfter(lecturerActivity.getEndDate())) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Start date can't be greater than end date");
+        }
     }
 }
