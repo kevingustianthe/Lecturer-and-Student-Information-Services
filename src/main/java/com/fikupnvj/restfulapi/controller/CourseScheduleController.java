@@ -2,6 +2,7 @@ package com.fikupnvj.restfulapi.controller;
 
 import com.fikupnvj.restfulapi.entity.CourseSchedule;
 import com.fikupnvj.restfulapi.model.ApiResponse;
+import com.fikupnvj.restfulapi.model.CourseScheduleResponse;
 import com.fikupnvj.restfulapi.service.CourseScheduleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -16,12 +17,12 @@ public class CourseScheduleController {
     private CourseScheduleService courseScheduleService;
 
     @GetMapping
-    public ApiResponse<List<CourseSchedule>> getAll() {
+    public ApiResponse<List<CourseScheduleResponse>> getAll() {
         return courseScheduleService.getAll();
     }
 
     @GetMapping("/{id}")
-    public ApiResponse<CourseSchedule> getById(@PathVariable String id) {
+    public ApiResponse<CourseScheduleResponse> getById(@PathVariable String id) {
         return courseScheduleService.getById(id);
     }
 
