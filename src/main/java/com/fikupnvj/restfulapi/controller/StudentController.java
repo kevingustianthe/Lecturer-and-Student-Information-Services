@@ -3,6 +3,8 @@ package com.fikupnvj.restfulapi.controller;
 import com.fikupnvj.restfulapi.entity.Account;
 import com.fikupnvj.restfulapi.entity.Student;
 import com.fikupnvj.restfulapi.model.ApiResponse;
+import com.fikupnvj.restfulapi.model.CourseScheduleResponse;
+import com.fikupnvj.restfulapi.model.StudentResponse;
 import com.fikupnvj.restfulapi.service.StudentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -22,8 +24,28 @@ public class StudentController {
     }
 
     @GetMapping("/me")
-    public ApiResponse<Student> getMe(Account account) {
+    public ApiResponse<StudentResponse> getMe(Account account) {
         return studentService.getMe(account);
+    }
+
+    @GetMapping("/me/course-schedule")
+    public ApiResponse<List<CourseScheduleResponse>> getMeCourseSchedule(Account account) {
+        return studentService.getMeCourseSchedule(account);
+    }
+
+    @GetMapping("/me/course-schedule/today")
+    public ApiResponse<List<CourseScheduleResponse>> getMeCourseScheduleToday(Account account) {
+        return studentService.getMeCourseScheduleToday(account);
+    }
+
+    @GetMapping("/{id}")
+    public ApiResponse<StudentResponse> getById(@PathVariable String id) {
+        return studentService.getById(id);
+    }
+
+    @GetMapping("/{id}/course-schedule")
+    public ApiResponse<List<CourseScheduleResponse>> getStudentCourseSchedule(@PathVariable String id) {
+        return studentService.getStudentCourseSchedule(id);
     }
 
     @PostMapping
