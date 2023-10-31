@@ -25,8 +25,8 @@ public class CourseSchedule {
     @JoinColumn(name = "course_id", referencedColumnName = "id")
     private Course course;
 
-    @Column(nullable = false)
-    private String semester;
+    @Column(name = "academic_period", nullable = false)
+    private String academicPeriod;
 
     @Column(nullable = false)
     private String className;

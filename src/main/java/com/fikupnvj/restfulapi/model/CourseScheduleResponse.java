@@ -14,8 +14,9 @@ public class CourseScheduleResponse {
     private String id;
     private String courseName;
     private int courseCredit;
+    private int courseSemester;
     private String courseStudyProgram;
-    private String semester;
+    private String academicPeriod;
     private String className;
     private String room;
     private DayOfWeek day;

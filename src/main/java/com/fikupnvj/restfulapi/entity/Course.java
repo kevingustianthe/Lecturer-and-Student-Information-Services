@@ -25,6 +25,9 @@ public class Course {
     @Column(nullable = false)
     private int credit;
 
+    @Column(nullable = false)
+    private int semester;
+
     @Column(name = "study_program", nullable = false)
     private String studyProgram;
 
