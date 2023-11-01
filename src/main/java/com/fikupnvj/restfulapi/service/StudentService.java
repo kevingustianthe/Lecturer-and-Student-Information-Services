@@ -52,7 +52,7 @@ public class StudentService {
     public ApiResponse<List<CourseScheduleResponse>> getMeCourseSchedule(Account account) {
         Student student = studentRepository.findByEmail(account.getEmail())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Student data not found"));
-        List<CourseScheduleResponse> courseSchedules = toStudentResponse(student).getCourseSchedules();
+        List<CourseScheduleResponse> courseSchedules = courseScheduleService.toListCourseScheduleResponse(student.getCourseSchedules());
 
         return new ApiResponse<>(true, "Data successfully retrieved", courseSchedules);
     }
@@ -61,8 +61,8 @@ public class StudentService {
         Student student = studentRepository.findByEmail(account.getEmail())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Student data not found"));
 
-        List<CourseScheduleResponse> courseSchedulesToday = toStudentResponse(student)
-                .getCourseSchedules()
+        List<CourseScheduleResponse> courseSchedulesToday = courseScheduleService
+                .toListCourseScheduleResponse(student.getCourseSchedules())
                 .stream().filter(schedule -> schedule.getDay() == LocalDate.now().getDayOfWeek()).toList();
 
         return new ApiResponse<>(true, "Course Schedule Today", courseSchedulesToday);
@@ -77,7 +77,7 @@ public class StudentService {
 
     public ApiResponse<List<CourseScheduleResponse>> getStudentCourseSchedule(String id) {
         Student student = findStudentById(id);
-        List<CourseScheduleResponse> courseSchedules = toStudentResponse(student).getCourseSchedules();
+        List<CourseScheduleResponse> courseSchedules = courseScheduleService.toListCourseScheduleResponse(student.getCourseSchedules());
 
         return new ApiResponse<>(true, "Data successfully retrieved", courseSchedules);
     }
@@ -100,13 +100,6 @@ public class StudentService {
     }
 
     public StudentResponse toStudentResponse(Student student) {
-        List<CourseSchedule> courseSchedules = student.getCourseSchedules();
-        List<CourseScheduleResponse> courseScheduleResponses = new ArrayList<>();
-        for (CourseSchedule courseSchedule : courseSchedules) {
-            CourseScheduleResponse courseScheduleResponse = courseScheduleService.toCourseScheduleResponse(courseSchedule);
-            courseScheduleResponses.add(courseScheduleResponse);
-        }
-
         return new StudentResponse(
                 student.getId(),
                 student.getName(),
@@ -116,7 +109,7 @@ public class StudentService {
                 student.getTelephone(),
                 student.getStudyProgram(),
                 student.getInterest(),
-                courseScheduleResponses
+                courseScheduleService.toListCourseScheduleResponse(student.getCourseSchedules())
         );
     }
 }

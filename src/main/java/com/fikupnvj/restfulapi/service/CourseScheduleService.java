@@ -20,11 +20,7 @@ public class CourseScheduleService {
 
     public ApiResponse<List<CourseScheduleResponse>> getAll() {
         List<CourseSchedule> courseSchedules = courseScheduleRepository.findAll();
-        List<CourseScheduleResponse> courseScheduleResponses = new ArrayList<>();
-        for (CourseSchedule courseSchedule : courseSchedules) {
-            CourseScheduleResponse courseScheduleResponse = toCourseScheduleResponse(courseSchedule);
-            courseScheduleResponses.add(courseScheduleResponse);
-        }
+        List<CourseScheduleResponse> courseScheduleResponses = toListCourseScheduleResponse(courseSchedules);
         return new ApiResponse<>(true, "Data successfully retrieved", courseScheduleResponses);
     }
 
@@ -71,5 +67,14 @@ public class CourseScheduleService {
                 courseSchedule.getLecturer().getName(),
                 courseSchedule.getStudents().size()
         );
+    }
+
+    public List<CourseScheduleResponse> toListCourseScheduleResponse(List<CourseSchedule> courseSchedules) {
+        List<CourseScheduleResponse> courseScheduleResponses = new ArrayList<>();
+        for (CourseSchedule courseSchedule : courseSchedules) {
+            CourseScheduleResponse courseScheduleResponse = toCourseScheduleResponse(courseSchedule);
+            courseScheduleResponses.add(courseScheduleResponse);
+        }
+        return courseScheduleResponses;
     }
 }
