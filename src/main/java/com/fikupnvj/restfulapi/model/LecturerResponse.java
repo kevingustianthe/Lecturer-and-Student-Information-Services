@@ -11,7 +11,14 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class LecturerResponse {
-    private Lecturer lecturer;
-    private List<LecturerCourseScheduleResponse> lecturerCourseSchedules;
+    private String id;
+    private String name;
+    private String nip;
+    private String nidn;
+    private String email;
+    private String telephone;
+    private String studyProgram;
+    private List<String> expertise;
+    private List<CourseScheduleResponse> courseSchedules;
     private List<LecturerActivityResponse> lecturerActivities;
 }

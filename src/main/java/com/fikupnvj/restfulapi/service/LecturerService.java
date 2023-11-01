@@ -1,12 +1,11 @@
 package com.fikupnvj.restfulapi.service;
 
 import com.fikupnvj.restfulapi.entity.Account;
-import com.fikupnvj.restfulapi.entity.CourseSchedule;
 import com.fikupnvj.restfulapi.entity.Lecturer;
 import com.fikupnvj.restfulapi.entity.LecturerActivity;
 import com.fikupnvj.restfulapi.model.ApiResponse;
+import com.fikupnvj.restfulapi.model.CourseScheduleResponse;
 import com.fikupnvj.restfulapi.model.LecturerActivityResponse;
-import com.fikupnvj.restfulapi.model.LecturerCourseScheduleResponse;
 import com.fikupnvj.restfulapi.model.LecturerResponse;
 import com.fikupnvj.restfulapi.repository.LecturerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +21,9 @@ public class LecturerService {
 
     @Autowired
     private LecturerRepository lecturerRepository;
+
+    @Autowired
+    private CourseScheduleService courseScheduleService;
 
     public ApiResponse<List<Lecturer>> getAll() {
         return new ApiResponse<>(true, "Data successfully retrieved", lecturerRepository.findAll());
@@ -46,11 +48,7 @@ public class LecturerService {
 
     public ApiResponse<LecturerResponse> getById(String id) {
         Lecturer lecturer = findById(id);
-        List<LecturerCourseScheduleResponse> lecturerCourseSchedules = toListLecturerCourseScheduleResponse(lecturer.getCourseSchedules());
-        List<LecturerActivityResponse> lecturerActivities = toListLecturerActivityResponse(lecturer.getLecturerActivities());
-
-        LecturerResponse lecturerResponse = new LecturerResponse(lecturer, lecturerCourseSchedules, lecturerActivities);
-        return new ApiResponse<>(true, "Data", lecturerResponse);
+        return new ApiResponse<>(true, "Data", toLecturerResponse(lecturer));
     }
 
     public ApiResponse<List<LecturerActivityResponse>> getLecturerActivity(String id) {
@@ -60,9 +58,9 @@ public class LecturerService {
         return new ApiResponse<>(true, "Data", lecturerActivities);
     }
 
-    public ApiResponse<List<LecturerCourseScheduleResponse>> getLecturerCourseSchedule(String id) {
+    public ApiResponse<List<CourseScheduleResponse>> getLecturerCourseSchedule(String id) {
         Lecturer lecturer = findById(id);
-        List<LecturerCourseScheduleResponse> lecturerCourseSchedules = toListLecturerCourseScheduleResponse(lecturer.getCourseSchedules());
+        List<CourseScheduleResponse> lecturerCourseSchedules = courseScheduleService.toListCourseScheduleResponse(lecturer.getCourseSchedules());
 
         return new ApiResponse<>(true, "Data", lecturerCourseSchedules);
     }
@@ -84,6 +82,21 @@ public class LecturerService {
         return new ApiResponse<>(true, "Lecturer data has been successfully deleted", lecturer);
     }
 
+    public LecturerResponse toLecturerResponse(Lecturer lecturer) {
+        return new LecturerResponse(
+                lecturer.getId(),
+                lecturer.getName(),
+                lecturer.getNip(),
+                lecturer.getNidn(),
+                lecturer.getEmail(),
+                lecturer.getTelephone(),
+                lecturer.getStudyProgram(),
+                lecturer.getExpertise(),
+                courseScheduleService.toListCourseScheduleResponse(lecturer.getCourseSchedules()),
+                toListLecturerActivityResponse(lecturer.getLecturerActivities())
+        );
+    }
+
     public List<LecturerActivityResponse> toListLecturerActivityResponse(List<LecturerActivity> activities) {
         List<LecturerActivityResponse> lecturerActivities = new ArrayList<>();
         for (LecturerActivity activity : activities) {
@@ -101,24 +114,4 @@ public class LecturerService {
         return lecturerActivities;
     }
 
-    public List<LecturerCourseScheduleResponse> toListLecturerCourseScheduleResponse(List<CourseSchedule> courseSchedules) {
-        List<LecturerCourseScheduleResponse> lecturerCourseSchedules = new ArrayList<>();
-        for (CourseSchedule courseSchedule : courseSchedules) {
-            LecturerCourseScheduleResponse lecturerCourseSchedule = new LecturerCourseScheduleResponse(
-                    courseSchedule.getId(),
-                    courseSchedule.getCourse().getName(),
-                    courseSchedule.getCourse().getCredit(),
-                    courseSchedule.getCourse().getSemester(),
-                    courseSchedule.getCourse().getStudyProgram(),
-                    courseSchedule.getAcademicPeriod(),
-                    courseSchedule.getClassName(),
-                    courseSchedule.getRoom(),
-                    courseSchedule.getDay(),
-                    courseSchedule.getStartTime(),
-                    courseSchedule.getEndTime()
-            );
-            lecturerCourseSchedules.add(lecturerCourseSchedule);
-        }
-        return lecturerCourseSchedules;
-    }
 }
