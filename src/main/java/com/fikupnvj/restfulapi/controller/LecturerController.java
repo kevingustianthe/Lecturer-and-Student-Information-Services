@@ -34,6 +34,14 @@ public class LecturerController {
         return lecturerService.getById(id);
     }
 
+    @GetMapping("/search")
+    public ApiResponse<List<Lecturer>> getByParam(
+            @RequestParam(name = "name", required = false, defaultValue = "") String name,
+            @RequestParam(name = "studyProgram", required = false, defaultValue = "") String studyProgram,
+            @RequestParam(name = "expertise", required = false, defaultValue = "") String expertise) {
+        return lecturerService.getByParam(name, studyProgram, expertise);
+    }
+
     @GetMapping("/{id}/activity")
     public ApiResponse<List<LecturerActivityResponse>> getLecturerActivity(@PathVariable String id) {
         return lecturerService.getLecturerActivity(id);

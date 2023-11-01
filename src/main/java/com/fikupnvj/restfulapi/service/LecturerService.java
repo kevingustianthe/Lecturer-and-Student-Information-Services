@@ -15,6 +15,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Service
 public class LecturerService {
@@ -49,6 +50,32 @@ public class LecturerService {
     public ApiResponse<LecturerResponse> getById(String id) {
         Lecturer lecturer = findById(id);
         return new ApiResponse<>(true, "Data", toLecturerResponse(lecturer));
+    }
+
+    public ApiResponse<List<Lecturer>> getByParam(String name, String studyProgram, String expertise) {
+        List<Lecturer> lecturers = lecturerRepository.findAll();
+
+        if (!Objects.equals(name, "")) {
+            lecturers = lecturers.stream().filter(
+                    lecturer -> lecturer.getName().toLowerCase().contains(name.toLowerCase())
+            ).toList();
+        }
+
+        if (!Objects.equals(studyProgram, "")) {
+            lecturers = lecturers.stream().filter(
+                    lecturer -> Objects.equals(lecturer.getStudyProgram(), studyProgram)
+            ).toList();
+        }
+
+        if (!Objects.equals(expertise, "")) {
+            lecturers = lecturers.stream().filter(
+                    lecturer -> lecturer.getExpertise().stream().anyMatch(
+                            exp -> exp.toLowerCase().contains(expertise.toLowerCase())
+                    )
+            ).toList();
+        }
+
+        return new ApiResponse<>(true, "Data successfully retrieved", lecturers);
     }
 
     public ApiResponse<List<LecturerActivityResponse>> getLecturerActivity(String id) {
