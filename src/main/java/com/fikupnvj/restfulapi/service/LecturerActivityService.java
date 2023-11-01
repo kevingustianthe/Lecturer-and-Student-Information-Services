@@ -9,7 +9,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Service
 public class LecturerActivityService {
@@ -29,6 +31,22 @@ public class LecturerActivityService {
     public ApiResponse<LecturerActivity> getById(String id) {
         LecturerActivity lecturerActivity = findById(id);
         return new ApiResponse<>(true, "Data successfully retrieved", lecturerActivity);
+    }
+
+    public ApiResponse<List<LecturerActivity>> getByParam(LecturerActivity.Status status, String name) {
+        List<LecturerActivity> lecturerActivities;
+        if (Objects.equals(name, "")) {
+            lecturerActivities = lecturerActivityRepository.findByStatus(status)
+                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Data not found"));
+        } else if (status == null) {
+            lecturerActivities = lecturerActivityRepository.findByLecturerNameContains(name)
+                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Data not found"));
+        } else {
+            lecturerActivities = lecturerActivityRepository.findByStatusAndLecturerNameContains(status, name)
+                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Data not found"));
+        }
+
+        return new ApiResponse<>(true, "Data successfully retrieved", lecturerActivities);
     }
 
     public ApiResponse<LecturerActivity> create(LecturerActivity lecturerActivity) {

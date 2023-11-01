@@ -25,6 +25,13 @@ public class LecturerActivityController {
         return lecturerActivityService.getById(id);
     }
 
+    @GetMapping("/search")
+    public ApiResponse<List<LecturerActivity>> getByStatus(
+            @RequestParam(name = "status", required = false, defaultValue = "") LecturerActivity.Status status,
+            @RequestParam(name = "name", required = false, defaultValue = "") String name) {
+        return lecturerActivityService.getByParam(status, name);
+    }
+
     @PostMapping
     public ApiResponse<LecturerActivity> create(@RequestBody LecturerActivity lecturerActivity) {
         return lecturerActivityService.create(lecturerActivity);
