@@ -43,6 +43,16 @@ public class StudentController {
         return studentService.getById(id);
     }
 
+    @GetMapping("/search")
+    public ApiResponse<List<Student>> getByParam(
+            @RequestParam(name = "name", required = false, defaultValue = "") String name,
+            @RequestParam(name = "nim", required = false, defaultValue = "") String nim,
+            @RequestParam(name = "classOf", required = false, defaultValue = "") String classOf,
+            @RequestParam(name = "studyProgram", required = false, defaultValue = "") String studyProgram,
+            @RequestParam(name = "interest", required = false, defaultValue = "") String interest) {
+        return studentService.getByParam(name, nim, classOf, studyProgram, interest);
+    }
+
     @GetMapping("/{id}/course-schedule")
     public ApiResponse<List<CourseScheduleResponse>> getStudentCourseSchedule(@PathVariable String id) {
         return studentService.getStudentCourseSchedule(id);

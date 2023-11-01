@@ -16,6 +16,7 @@ import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
@@ -73,6 +74,42 @@ public class StudentService {
         StudentResponse studentResponse = toStudentResponse(student);
 
         return new ApiResponse<>(true, "Data successfully retrieved", studentResponse);
+    }
+
+    public ApiResponse<List<Student>> getByParam(String name, String nim, String classOf, String studyProgram, String interest) {
+        List<Student> students = studentRepository.findAll();
+
+        if (!Objects.equals(name, "")) {
+            students = students.stream().filter(
+                    student -> student.getName().toLowerCase().contains(name.toLowerCase())
+            ).toList();
+        }
+
+        if (!Objects.equals(nim, "")) {
+            students = students.stream().filter(
+                    student -> student.getNim().contains(nim)
+            ).toList();
+        }
+
+        if (!Objects.equals(classOf, "")) {
+            students = students.stream().filter(
+                    student -> student.getClassOf().equals(classOf)
+            ).toList();
+        }
+
+        if (!Objects.equals(studyProgram, "")) {
+            students = students.stream().filter(
+                    student -> student.getStudyProgram().equals(studyProgram)
+            ).toList();
+        }
+
+        if (!Objects.equals(interest, "")) {
+            students = students.stream().filter(
+                    student -> student.getInterest().toLowerCase().contains(interest.toLowerCase())
+            ).toList();
+        }
+
+        return new ApiResponse<>(true, "Data successfully retrieved", students);
     }
 
     public ApiResponse<List<CourseScheduleResponse>> getStudentCourseSchedule(String id) {
