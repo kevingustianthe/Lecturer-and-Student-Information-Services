@@ -25,6 +25,14 @@ public class CourseController {
         return courseService.getById(id);
     }
 
+    @GetMapping("/search")
+    public ApiResponse<List<Course>> getByParam(
+            @RequestParam(name = "name", required = false, defaultValue = "") String name,
+            @RequestParam(name = "semester", required = false, defaultValue = "0") int semester,
+            @RequestParam(name = "studyProgram", required = false, defaultValue = "") String studyProgram) {
+        return courseService.getByParam(name, semester, studyProgram);
+    }
+
     @PostMapping
     public ApiResponse<Course> create(@RequestBody Course course) {
         return courseService.create(course);

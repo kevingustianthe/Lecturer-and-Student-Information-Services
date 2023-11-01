@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
+import java.util.Objects;
 
 @Service
 public class CourseService {
@@ -28,6 +29,24 @@ public class CourseService {
     public ApiResponse<Course> getById(String id) {
         Course course = findById(id);
         return new ApiResponse<>(true, "Data successfully retrieved", course);
+    }
+
+    public ApiResponse<List<Course>> getByParam(String name, int semester, String studyProgram) {
+        List<Course> courses = courseRepository.findAll();
+
+        if (!Objects.equals(name, "")) {
+            courses = courses.stream().filter(course -> course.getName().toLowerCase().contains(name.toLowerCase())).toList();
+        }
+
+        if (semester != 0) {
+            courses = courses.stream().filter(course -> course.getSemester() == semester).toList();
+        }
+
+        if (!Objects.equals(studyProgram, "")) {
+            courses = courses.stream().filter(course -> Objects.equals(course.getStudyProgram(), studyProgram)).toList();
+        }
+
+        return new ApiResponse<>(true, "Data successfully retrieved", courses);
     }
 
     public ApiResponse<Course> create(Course course) {
