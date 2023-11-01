@@ -26,6 +26,17 @@ public class CourseScheduleController {
         return courseScheduleService.getById(id);
     }
 
+    @GetMapping("/search")
+    public ApiResponse<List<CourseScheduleResponse>> getByParam(
+            @RequestParam(name = "courseName", required = false, defaultValue = "") String courseName,
+            @RequestParam(name = "semester", required = false, defaultValue = "0") int semester,
+            @RequestParam(name = "studyProgram", required = false, defaultValue = "") String studyProgram,
+            @RequestParam(name = "academicPeriod", required = false, defaultValue = "") String academicPeriod,
+            @RequestParam(name = "room", required = false, defaultValue = "") String room,
+            @RequestParam(name = "lecturerName", required = false, defaultValue = "") String lecturerName) {
+        return courseScheduleService.getByParam(courseName, semester, studyProgram, academicPeriod, room, lecturerName);
+    }
+
     @PostMapping
     public ApiResponse<CourseSchedule> create(@RequestBody CourseSchedule courseSchedule) {
         return courseScheduleService.create(courseSchedule);

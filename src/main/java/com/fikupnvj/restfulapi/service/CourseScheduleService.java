@@ -11,6 +11,8 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Service
 public class CourseScheduleService {
@@ -33,6 +35,44 @@ public class CourseScheduleService {
         CourseSchedule courseSchedule = findById(id);
         CourseScheduleResponse courseScheduleResponse = toCourseScheduleResponse(courseSchedule);
         return new ApiResponse<>(true, "Data successfully retrieved", courseScheduleResponse);
+    }
+
+    public ApiResponse<List<CourseScheduleResponse>> getByParam(
+            String courseName,
+            int semester,
+            String studyProgram,
+            String academicPeriod,
+            String room,
+            String lecturerName) {
+        List<CourseSchedule> courseSchedules = courseScheduleRepository.findAll();
+
+        if (!Objects.equals(courseName, "")) {
+            courseSchedules = courseSchedules.stream().filter(schedule -> schedule.getCourse().getName().contains(courseName)).toList();
+        }
+
+        if (semester != 0) {
+            courseSchedules = courseSchedules.stream().filter(schedule -> schedule.getCourse().getSemester() == semester).toList();
+        }
+
+        if (!Objects.equals(studyProgram, "")) {
+            courseSchedules = courseSchedules.stream().filter(schedule -> Objects.equals(schedule.getCourse().getStudyProgram(), studyProgram)).toList();
+        }
+
+        if (!Objects.equals(academicPeriod, "")) {
+            courseSchedules = courseSchedules.stream().filter(schedule -> Objects.equals(schedule.getAcademicPeriod(), academicPeriod)).toList();
+        }
+
+        if (!Objects.equals(room, "")) {
+            courseSchedules = courseSchedules.stream().filter(schedule -> Objects.equals(schedule.getRoom(), room)).toList();
+        }
+
+        if (!Objects.equals(lecturerName, "")) {
+            courseSchedules = courseSchedules.stream().filter(schedule -> schedule.getLecturer().getName().contains(lecturerName)).toList();
+        }
+
+        List<CourseScheduleResponse> courseScheduleResponses = toListCourseScheduleResponse(courseSchedules);
+
+        return new ApiResponse<>(true, "Data successfully retrieved", courseScheduleResponses);
     }
 
     public ApiResponse<CourseSchedule> create(CourseSchedule courseSchedule) {
