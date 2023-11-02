@@ -38,7 +38,7 @@ public class LecturerService {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Lecturer data not found"));
     }
 
-    public ApiResponse<Lecturer> getMe(Account account) {
+    public ApiResponse<LecturerResponse> getMe(Account account) {
         Lecturer lecturer = lecturerRepository.findByEmail(account.getEmail())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Lecturer data not found"));
 
@@ -47,7 +47,10 @@ public class LecturerService {
             lecturerRepository.save(lecturer);
         }
 
-        return new ApiResponse<>(true, "Data successfully retrieved", lecturer);
+        lecturerActivityService.updateAllStatus(lecturer.getLecturerActivities());
+        LecturerResponse lecturerResponse = toLecturerResponse(lecturer);
+
+        return new ApiResponse<>(true, "Data successfully retrieved", lecturerResponse);
     }
 
     public ApiResponse<LecturerResponse> getById(String id) {

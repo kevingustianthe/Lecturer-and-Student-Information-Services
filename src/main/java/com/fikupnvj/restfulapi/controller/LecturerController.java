@@ -25,7 +25,7 @@ public class LecturerController {
     }
 
     @GetMapping("/me")
-    public ApiResponse<Lecturer> getMe(Account account) {
+    public ApiResponse<LecturerResponse> getMe(Account account) {
         return lecturerService.getMe(account);
     }
 
