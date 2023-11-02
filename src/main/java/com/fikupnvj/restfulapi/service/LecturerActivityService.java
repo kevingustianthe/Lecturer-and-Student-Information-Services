@@ -20,7 +20,9 @@ public class LecturerActivityService {
     private LecturerActivityRepository lecturerActivityRepository;
 
     public ApiResponse<List<LecturerActivity>> getAll() {
-        return new ApiResponse<>(true, "Data successfully retrieved", lecturerActivityRepository.findAll());
+        List<LecturerActivity> activities = lecturerActivityRepository.findAll();
+        updateAllStatus(activities);
+        return new ApiResponse<>(true, "Data successfully retrieved", activities);
     }
 
     public LecturerActivity findById(String id) {
@@ -30,6 +32,7 @@ public class LecturerActivityService {
 
     public ApiResponse<LecturerActivity> getById(String id) {
         LecturerActivity lecturerActivity = findById(id);
+        updateStatus(lecturerActivity);
         return new ApiResponse<>(true, "Data successfully retrieved", lecturerActivity);
     }
 
@@ -51,7 +54,7 @@ public class LecturerActivityService {
 
     public ApiResponse<LecturerActivity> create(LecturerActivity lecturerActivity) {
         validateDate(lecturerActivity);
-        lecturerActivity.setStatus(lecturerActivity);
+        lecturerActivity.updateStatus();
 
         return new ApiResponse<>(true, "Lecturer activity data has been successfully added", lecturerActivityRepository.save(lecturerActivity));
     }
@@ -60,7 +63,7 @@ public class LecturerActivityService {
         findById(id);
         lecturerActivity.setId(id);
         validateDate(lecturerActivity);
-        lecturerActivity.setStatus(lecturerActivity);
+        lecturerActivity.updateStatus();
 
         return new ApiResponse<>(true, "Lecturer activity data has been successfully updated", lecturerActivityRepository.save(lecturerActivity));
     }
@@ -74,6 +77,17 @@ public class LecturerActivityService {
     public void validateDate(LecturerActivity lecturerActivity) {
         if (lecturerActivity.getStartDate().isAfter(lecturerActivity.getEndDate())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Start date can't be greater than end date");
+        }
+    }
+
+    public void updateStatus(LecturerActivity lecturerActivity) {
+        lecturerActivity.updateStatus();
+        lecturerActivityRepository.save(lecturerActivity);
+    }
+
+    public void updateAllStatus(List<LecturerActivity> activities) {
+        for (LecturerActivity activity : activities) {
+            updateStatus(activity);
         }
     }
 }

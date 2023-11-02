@@ -26,6 +26,9 @@ public class LecturerService {
     @Autowired
     private CourseScheduleService courseScheduleService;
 
+    @Autowired
+    private LecturerActivityService lecturerActivityService;
+
     public ApiResponse<List<Lecturer>> getAll() {
         return new ApiResponse<>(true, "Data successfully retrieved", lecturerRepository.findAll());
     }
@@ -49,6 +52,7 @@ public class LecturerService {
 
     public ApiResponse<LecturerResponse> getById(String id) {
         Lecturer lecturer = findById(id);
+        lecturerActivityService.updateAllStatus(lecturer.getLecturerActivities());
         return new ApiResponse<>(true, "Data", toLecturerResponse(lecturer));
     }
 
@@ -80,6 +84,7 @@ public class LecturerService {
 
     public ApiResponse<List<LecturerActivityResponse>> getLecturerActivity(String id) {
         Lecturer lecturer = findById(id);
+        lecturerActivityService.updateAllStatus(lecturer.getLecturerActivities());
         List<LecturerActivityResponse> lecturerActivities = toListLecturerActivityResponse(lecturer.getLecturerActivities());
 
         return new ApiResponse<>(true, "Data", lecturerActivities);
