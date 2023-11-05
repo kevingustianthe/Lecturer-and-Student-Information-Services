@@ -23,9 +23,7 @@ public class AdminArgumentResolver implements HandlerMethodArgumentResolver {
 
     @Override
     public boolean supportsParameter(MethodParameter parameter) {
-        if (parameter.getParameterType().equals(Account.class))
-            return Objects.equals(parameter.getParameterName(), "admin");
-        return false;
+        return parameter.getParameterType().equals(Account.class) && Objects.equals(parameter.getParameterName(), "admin");
     }
 
     @Override

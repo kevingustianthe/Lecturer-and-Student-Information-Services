@@ -13,6 +13,8 @@ import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.method.support.ModelAndViewContainer;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.Objects;
+
 @Component
 public class UserArgumentResolver implements HandlerMethodArgumentResolver {
 
@@ -21,7 +23,7 @@ public class UserArgumentResolver implements HandlerMethodArgumentResolver {
 
     @Override
     public boolean supportsParameter(MethodParameter parameter) {
-        return Account.class.equals(parameter.getParameterType());
+        return parameter.getParameterType().equals(Account.class) && Objects.equals(parameter.getParameterName(), "account");
     }
 
     @Override
