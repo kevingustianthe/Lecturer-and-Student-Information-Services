@@ -19,32 +19,32 @@ public class StudentController {
     private StudentService studentService;
 
     @GetMapping
-    public ApiResponse<List<Student>> getAll() {
+    public ApiResponse<List<Student>> getAll(Account account) {
         return studentService.getAll();
     }
 
     @GetMapping("/me")
-    public ApiResponse<StudentResponse> getMe(Account account) {
-        return studentService.getMe(account);
+    public ApiResponse<StudentResponse> getMe(Account student) {
+        return studentService.getMe(student);
     }
 
     @GetMapping("/me/course-schedule")
-    public ApiResponse<List<CourseScheduleResponse>> getMeCourseSchedule(Account account) {
-        return studentService.getMeCourseSchedule(account);
+    public ApiResponse<List<CourseScheduleResponse>> getMeCourseSchedule(Account student) {
+        return studentService.getMeCourseSchedule(student);
     }
 
     @GetMapping("/me/course-schedule/today")
-    public ApiResponse<List<CourseScheduleResponse>> getMeCourseScheduleToday(Account account) {
-        return studentService.getMeCourseScheduleToday(account);
+    public ApiResponse<List<CourseScheduleResponse>> getMeCourseScheduleToday(Account student) {
+        return studentService.getMeCourseScheduleToday(student);
     }
 
     @GetMapping("/{id}")
-    public ApiResponse<StudentResponse> getById(@PathVariable String id) {
+    public ApiResponse<StudentResponse> getById(Account account, @PathVariable String id) {
         return studentService.getById(id);
     }
 
     @GetMapping("/search")
-    public ApiResponse<List<Student>> getByParam(
+    public ApiResponse<List<Student>> getByParam(Account account,
             @RequestParam(name = "name", required = false, defaultValue = "") String name,
             @RequestParam(name = "nim", required = false, defaultValue = "") String nim,
             @RequestParam(name = "classOf", required = false, defaultValue = "") String classOf,
@@ -54,22 +54,22 @@ public class StudentController {
     }
 
     @GetMapping("/{id}/course-schedule")
-    public ApiResponse<List<CourseScheduleResponse>> getStudentCourseSchedule(@PathVariable String id) {
+    public ApiResponse<List<CourseScheduleResponse>> getStudentCourseSchedule(Account account, @PathVariable String id) {
         return studentService.getStudentCourseSchedule(id);
     }
 
     @PostMapping
-    public ApiResponse<Student> create(@RequestBody Student student) {
+    public ApiResponse<Student> create(Account admin, @RequestBody Student student) {
         return studentService.create(student);
     }
 
     @PutMapping("/{id}")
-    public ApiResponse<Student> update(@PathVariable String id, @RequestBody Student student) {
+    public ApiResponse<Student> update(Account admin, @PathVariable String id, @RequestBody Student student) {
         return studentService.update(id, student);
     }
 
     @DeleteMapping("/{id}")
-    public ApiResponse<Student> delete(@PathVariable String id) {
+    public ApiResponse<Student> delete(Account admin, @PathVariable String id) {
         return studentService.delete(id);
     }
 }

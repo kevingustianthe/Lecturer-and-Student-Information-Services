@@ -20,32 +20,32 @@ public class LecturerController {
     private LecturerService lecturerService;
 
     @GetMapping
-    public ApiResponse<List<Lecturer>> getAll() {
+    public ApiResponse<List<Lecturer>> getAll(Account account) {
         return lecturerService.getAll();
     }
 
     @GetMapping("/me")
-    public ApiResponse<LecturerResponse> getMe(Account account) {
-        return lecturerService.getMe(account);
+    public ApiResponse<LecturerResponse> getMe(Account lecturer) {
+        return lecturerService.getMe(lecturer);
     }
 
     @GetMapping("/me/activity")
-    public ApiResponse<List<LecturerActivityResponse>> getMeLecturerActivity(Account account) {
-        return lecturerService.getMeLecturerActivity(account);
+    public ApiResponse<List<LecturerActivityResponse>> getMeLecturerActivity(Account lecturer) {
+        return lecturerService.getMeLecturerActivity(lecturer);
     }
 
     @GetMapping("/me/course-schedule")
-    public ApiResponse<List<CourseScheduleResponse>> getMeLecturerCourseSchedule(Account account) {
-        return lecturerService.getMeLecturerCourseSchedule(account);
+    public ApiResponse<List<CourseScheduleResponse>> getMeLecturerCourseSchedule(Account lecturer) {
+        return lecturerService.getMeLecturerCourseSchedule(lecturer);
     }
 
     @GetMapping("/{id}")
-    public ApiResponse<LecturerResponse> getById(@PathVariable String id) {
+    public ApiResponse<LecturerResponse> getById(Account account, @PathVariable String id) {
         return lecturerService.getById(id);
     }
 
     @GetMapping("/search")
-    public ApiResponse<List<Lecturer>> getByParam(
+    public ApiResponse<List<Lecturer>> getByParam(Account account,
             @RequestParam(name = "name", required = false, defaultValue = "") String name,
             @RequestParam(name = "studyProgram", required = false, defaultValue = "") String studyProgram,
             @RequestParam(name = "expertise", required = false, defaultValue = "") String expertise) {
@@ -53,27 +53,27 @@ public class LecturerController {
     }
 
     @GetMapping("/{id}/activity")
-    public ApiResponse<List<LecturerActivityResponse>> getLecturerActivity(@PathVariable String id) {
+    public ApiResponse<List<LecturerActivityResponse>> getLecturerActivity(Account account, @PathVariable String id) {
         return lecturerService.getLecturerActivity(id);
     }
 
     @GetMapping("/{id}/course-schedule")
-    public ApiResponse<List<CourseScheduleResponse>> getLecturerCourseSchedule(@PathVariable String id) {
+    public ApiResponse<List<CourseScheduleResponse>> getLecturerCourseSchedule(Account account, @PathVariable String id) {
         return lecturerService.getLecturerCourseSchedule(id);
     }
 
     @PostMapping
-    public ApiResponse<Lecturer> create(@RequestBody Lecturer lecturer) {
+    public ApiResponse<Lecturer> create(Account admin, @RequestBody Lecturer lecturer) {
         return lecturerService.create(lecturer);
     }
 
     @PutMapping("/{id}")
-    public ApiResponse<Lecturer> update(@PathVariable String id, @RequestBody Lecturer lecturer) {
+    public ApiResponse<Lecturer> update(Account admin, @PathVariable String id, @RequestBody Lecturer lecturer) {
         return lecturerService.update(id, lecturer);
     }
 
     @DeleteMapping("/{id}")
-    public ApiResponse<Lecturer> delete(@PathVariable String id) {
+    public ApiResponse<Lecturer> delete(Account admin, @PathVariable String id) {
         return lecturerService.delete(id);
     }
 }

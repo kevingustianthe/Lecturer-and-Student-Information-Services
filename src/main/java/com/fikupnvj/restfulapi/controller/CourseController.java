@@ -1,5 +1,6 @@
 package com.fikupnvj.restfulapi.controller;
 
+import com.fikupnvj.restfulapi.entity.Account;
 import com.fikupnvj.restfulapi.entity.Course;
 import com.fikupnvj.restfulapi.model.ApiResponse;
 import com.fikupnvj.restfulapi.service.CourseService;
@@ -16,17 +17,17 @@ public class CourseController {
     private CourseService courseService;
 
     @GetMapping
-    public ApiResponse<List<Course>> getAll() {
+    public ApiResponse<List<Course>> getAll(Account account) {
         return courseService.getAll();
     }
 
     @GetMapping("/{id}")
-    public ApiResponse<Course> getById(@PathVariable String id) {
+    public ApiResponse<Course> getById(Account account, @PathVariable String id) {
         return courseService.getById(id);
     }
 
     @GetMapping("/search")
-    public ApiResponse<List<Course>> getByParam(
+    public ApiResponse<List<Course>> getByParam(Account account,
             @RequestParam(name = "name", required = false, defaultValue = "") String name,
             @RequestParam(name = "semester", required = false, defaultValue = "0") int semester,
             @RequestParam(name = "studyProgram", required = false, defaultValue = "") String studyProgram) {
@@ -34,17 +35,17 @@ public class CourseController {
     }
 
     @PostMapping
-    public ApiResponse<Course> create(@RequestBody Course course) {
+    public ApiResponse<Course> create(Account admin, @RequestBody Course course) {
         return courseService.create(course);
     }
 
     @PutMapping("/{id}")
-    public ApiResponse<Course> update(@PathVariable String id, @RequestBody Course course) {
+    public ApiResponse<Course> update(Account admin, @PathVariable String id, @RequestBody Course course) {
         return courseService.update(id, course);
     }
 
     @DeleteMapping("/{id}")
-    public ApiResponse<Course> delete(@PathVariable String id) {
+    public ApiResponse<Course> delete(Account admin, @PathVariable String id) {
         return courseService.delete(id);
     }
 

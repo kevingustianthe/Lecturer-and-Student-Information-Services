@@ -1,5 +1,6 @@
 package com.fikupnvj.restfulapi.controller;
 
+import com.fikupnvj.restfulapi.entity.Account;
 import com.fikupnvj.restfulapi.entity.CourseSchedule;
 import com.fikupnvj.restfulapi.model.ApiResponse;
 import com.fikupnvj.restfulapi.model.CourseScheduleResponse;
@@ -17,17 +18,17 @@ public class CourseScheduleController {
     private CourseScheduleService courseScheduleService;
 
     @GetMapping
-    public ApiResponse<List<CourseScheduleResponse>> getAll() {
+    public ApiResponse<List<CourseScheduleResponse>> getAll(Account account) {
         return courseScheduleService.getAll();
     }
 
     @GetMapping("/{id}")
-    public ApiResponse<CourseScheduleResponse> getById(@PathVariable String id) {
+    public ApiResponse<CourseScheduleResponse> getById(Account account, @PathVariable String id) {
         return courseScheduleService.getById(id);
     }
 
     @GetMapping("/search")
-    public ApiResponse<List<CourseScheduleResponse>> getByParam(
+    public ApiResponse<List<CourseScheduleResponse>> getByParam(Account account,
             @RequestParam(name = "courseName", required = false, defaultValue = "") String courseName,
             @RequestParam(name = "semester", required = false, defaultValue = "0") int semester,
             @RequestParam(name = "studyProgram", required = false, defaultValue = "") String studyProgram,
@@ -38,17 +39,17 @@ public class CourseScheduleController {
     }
 
     @PostMapping
-    public ApiResponse<CourseSchedule> create(@RequestBody CourseSchedule courseSchedule) {
+    public ApiResponse<CourseSchedule> create(Account admin, @RequestBody CourseSchedule courseSchedule) {
         return courseScheduleService.create(courseSchedule);
     }
 
     @PutMapping("/{id}")
-    public ApiResponse<CourseSchedule> update(@PathVariable String id, @RequestBody CourseSchedule courseSchedule) {
+    public ApiResponse<CourseSchedule> update(Account admin, @PathVariable String id, @RequestBody CourseSchedule courseSchedule) {
         return courseScheduleService.update(id, courseSchedule);
     }
 
     @DeleteMapping("/{id}")
-    public ApiResponse<CourseSchedule> delete(@PathVariable String id) {
+    public ApiResponse<CourseSchedule> delete(Account admin, @PathVariable String id) {
         return courseScheduleService.delete(id);
     }
 }
