@@ -29,6 +29,16 @@ public class LecturerController {
         return lecturerService.getMe(account);
     }
 
+    @GetMapping("/me/activity")
+    public ApiResponse<List<LecturerActivityResponse>> getMeLecturerActivity(Account account) {
+        return lecturerService.getMeLecturerActivity(account);
+    }
+
+    @GetMapping("/me/course-schedule")
+    public ApiResponse<List<CourseScheduleResponse>> getMeLecturerCourseSchedule(Account account) {
+        return lecturerService.getMeLecturerCourseSchedule(account);
+    }
+
     @GetMapping("/{id}")
     public ApiResponse<LecturerResponse> getById(@PathVariable String id) {
         return lecturerService.getById(id);

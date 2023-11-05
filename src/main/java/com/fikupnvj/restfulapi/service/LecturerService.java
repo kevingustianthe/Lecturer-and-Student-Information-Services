@@ -53,6 +53,25 @@ public class LecturerService {
         return new ApiResponse<>(true, "Data successfully retrieved", lecturerResponse);
     }
 
+    public ApiResponse<List<LecturerActivityResponse>> getMeLecturerActivity(Account account) {
+        Lecturer lecturer = lecturerRepository.findByEmail(account.getEmail())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Lecturer data not found"));
+
+        lecturerActivityService.updateAllStatus(lecturer.getLecturerActivities());
+        List<LecturerActivityResponse> lecturerActivityResponses = toListLecturerActivityResponse(lecturer.getLecturerActivities());
+
+        return new ApiResponse<>(true, "Data successfully retrieved", lecturerActivityResponses);
+    }
+
+    public ApiResponse<List<CourseScheduleResponse>> getMeLecturerCourseSchedule(Account account) {
+        Lecturer lecturer = lecturerRepository.findByEmail(account.getEmail())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Lecturer data not found"));
+
+        List<CourseScheduleResponse> courseScheduleResponses = courseScheduleService.toListCourseScheduleResponse(lecturer.getCourseSchedules());
+
+        return new ApiResponse<>(true, "Data successfully retrieved", courseScheduleResponses);
+    }
+
     public ApiResponse<LecturerResponse> getById(String id) {
         Lecturer lecturer = findById(id);
         lecturerActivityService.updateAllStatus(lecturer.getLecturerActivities());
