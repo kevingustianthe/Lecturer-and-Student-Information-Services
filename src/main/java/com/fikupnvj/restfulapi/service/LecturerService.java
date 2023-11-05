@@ -38,9 +38,13 @@ public class LecturerService {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Lecturer data not found"));
     }
 
-    public ApiResponse<LecturerResponse> getMe(Account account) {
-        Lecturer lecturer = lecturerRepository.findByEmail(account.getEmail())
+    public Lecturer findByEmail(String email) {
+        return lecturerRepository.findByEmail(email)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Lecturer data not found"));
+    }
+
+    public ApiResponse<LecturerResponse> getMe(Account account) {
+        Lecturer lecturer = findByEmail(account.getEmail());
 
         if (lecturer.getAccount() == null) {
             lecturer.setAccount(account);
@@ -54,8 +58,7 @@ public class LecturerService {
     }
 
     public ApiResponse<List<LecturerActivityResponse>> getMeLecturerActivity(Account account) {
-        Lecturer lecturer = lecturerRepository.findByEmail(account.getEmail())
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Lecturer data not found"));
+        Lecturer lecturer = findByEmail(account.getEmail());
 
         lecturerActivityService.updateAllStatus(lecturer.getLecturerActivities());
         List<LecturerActivityResponse> lecturerActivityResponses = toListLecturerActivityResponse(lecturer.getLecturerActivities());
@@ -64,8 +67,7 @@ public class LecturerService {
     }
 
     public ApiResponse<List<CourseScheduleResponse>> getMeLecturerCourseSchedule(Account account) {
-        Lecturer lecturer = lecturerRepository.findByEmail(account.getEmail())
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Lecturer data not found"));
+        Lecturer lecturer = findByEmail(account.getEmail());
 
         List<CourseScheduleResponse> courseScheduleResponses = courseScheduleService.toListCourseScheduleResponse(lecturer.getCourseSchedules());
 
