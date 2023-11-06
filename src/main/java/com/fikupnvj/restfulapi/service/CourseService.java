@@ -59,7 +59,7 @@ public class CourseService {
     public ApiResponse<Course> update(String id, Course course) {
         findById(id);
         course.setId(id);
-        if (isDuplicate(course)) {
+        if (!canUpdate(id, course)) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Course data already exists");
         }
         return new ApiResponse<>(true, "Course data has been successfully updated", courseRepository.save(course));
@@ -76,5 +76,12 @@ public class CourseService {
                 .orElse(null);
 
         return dbCourse != null;
+    }
+
+    public boolean canUpdate(String id, Course course) {
+        Course dbCourse = findById(id);
+        if (dbCourse.getName().equals(course.getName()) && dbCourse.getCredit() == course.getCredit() && dbCourse.getSemester() == course.getSemester() && dbCourse.getStudyProgram().equals(course.getStudyProgram())) {
+            return true;
+        } else return !isDuplicate(course);
     }
 }
