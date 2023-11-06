@@ -120,13 +120,21 @@ public class StudentService {
     }
 
     public ApiResponse<Student> create(Student student) {
-        studentRepository.save(student);
+        if (!isDuplicate(student)) {
+            studentRepository.save(student);
+        } else {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Student data already exists");
+        }
         return new ApiResponse<>(true, "Student data has been successfully added", student);
     }
 
     public ApiResponse<Student> update(String id, Student student) {
         findStudentById(id);
-        student.setId(id);
+        if (canUpdate(id, student)) {
+            student.setId(id);
+        } else {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Student data already exists");
+        }
         return new ApiResponse<>(true, "Student data has been successfully updated", studentRepository.save(student));
     }
 
@@ -148,5 +156,36 @@ public class StudentService {
                 student.getInterest(),
                 courseScheduleService.toListCourseScheduleResponse(student.getCourseSchedules())
         );
+    }
+
+    public boolean isDuplicate(Student student) {
+        Student dbStudent = studentRepository.findFirstByNimOrEmailOrTelephone(student.getNim(), student.getEmail(), student.getTelephone())
+                .orElse(null);
+
+        return dbStudent != null;
+    }
+
+    public boolean canUpdate(String id, Student student) {
+        Student dbStudent = findStudentById(id);
+
+        if (dbStudent.getNim().equals(student.getNim()) && dbStudent.getEmail().equals(student.getEmail()) && dbStudent.getTelephone().equals(student.getTelephone())) {
+            return true;
+        } else {
+            if (!dbStudent.getNim().equals(student.getNim())) {
+                if (studentRepository.findByNim(student.getNim()).isPresent()) {
+                    return false;
+                }
+            }
+            if (!Objects.equals(dbStudent.getEmail(), student.getEmail())) {
+                if (studentRepository.findByEmail(student.getEmail()).isPresent()) {
+                    return false;
+                }
+            }
+            if (!Objects.equals(dbStudent.getTelephone(), student.getTelephone())) {
+                return studentRepository.findByTelephone(student.getTelephone()).isEmpty();
+            }
+
+            return true;
+        }
     }
 }
