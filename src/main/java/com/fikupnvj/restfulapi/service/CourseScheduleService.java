@@ -76,12 +76,18 @@ public class CourseScheduleService {
     }
 
     public ApiResponse<CourseSchedule> create(CourseSchedule courseSchedule) {
+        if (isDuplicate(courseSchedule)) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Course schedule data already exists");
+        }
         return new ApiResponse<>(true, "Course schedule data has been successfully added", courseScheduleRepository.save(courseSchedule));
     }
 
     public ApiResponse<CourseSchedule> update(String id, CourseSchedule courseSchedule) {
         findById(id);
         courseSchedule.setId(id);
+        if (!canUpdate(id, courseSchedule)) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Course schedule data already exists");
+        }
         return new ApiResponse<>(true, "Course schedule data has been successfully updated", courseScheduleRepository.save(courseSchedule));
     }
 
@@ -116,5 +122,20 @@ public class CourseScheduleService {
             courseScheduleResponses.add(courseScheduleResponse);
         }
         return courseScheduleResponses;
+    }
+
+    public boolean isDuplicate(CourseSchedule courseSchedule) {
+        CourseSchedule dbCourseSchedule = courseScheduleRepository.findByAcademicPeriodAndClassNameAndDayAndStartTimeAndEndTimeAndRoom(
+                courseSchedule.getAcademicPeriod(), courseSchedule.getClassName(), courseSchedule.getDay(), courseSchedule.getStartTime(), courseSchedule.getEndTime(), courseSchedule.getRoom())
+                .orElse(null);
+
+        return dbCourseSchedule != null;
+    }
+
+    public boolean canUpdate(String id, CourseSchedule courseSchedule) {
+        CourseSchedule dbCourse = findById(id);
+        if (dbCourse.getAcademicPeriod().equals(courseSchedule.getAcademicPeriod()) && dbCourse.getClassName().equals(courseSchedule.getClassName()) && dbCourse.getDay().equals(courseSchedule.getDay()) && dbCourse.getStartTime().equals(courseSchedule.getStartTime()) && dbCourse.getEndTime().equals(courseSchedule.getEndTime()) && dbCourse.getRoom().equals(courseSchedule.getRoom())) {
+            return true;
+        } else return !isDuplicate(courseSchedule);
     }
 }
