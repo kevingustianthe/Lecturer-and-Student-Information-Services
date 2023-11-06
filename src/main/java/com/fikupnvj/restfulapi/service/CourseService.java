@@ -50,12 +50,18 @@ public class CourseService {
     }
 
     public ApiResponse<Course> create(Course course) {
+        if (isDuplicate(course)) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Course data already exists");
+        }
         return new ApiResponse<>(true, "Course data has been successfully added", courseRepository.save(course));
     }
 
     public ApiResponse<Course> update(String id, Course course) {
         findById(id);
         course.setId(id);
+        if (isDuplicate(course)) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Course data already exists");
+        }
         return new ApiResponse<>(true, "Course data has been successfully updated", courseRepository.save(course));
     }
 
@@ -63,5 +69,12 @@ public class CourseService {
         Course course = findById(id);
         courseRepository.delete(course);
         return new ApiResponse<>(true, "Course data has been successfully deleted", course);
+    }
+
+    public boolean isDuplicate(Course course) {
+        Course dbCourse = courseRepository.findByNameAndCreditAndSemesterAndStudyProgram(course.getName(), course.getCredit(), course.getSemester(), course.getStudyProgram())
+                .orElse(null);
+
+        return dbCourse != null;
     }
 }
