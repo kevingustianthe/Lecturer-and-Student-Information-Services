@@ -122,13 +122,21 @@ public class LecturerService {
     }
 
     public ApiResponse<Lecturer> create(Lecturer lecturer) {
-        lecturerRepository.save(lecturer);
+        if (!isDuplicate(lecturer)) {
+            lecturerRepository.save(lecturer);
+        } else {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Lecturer data already exists");
+        }
         return new ApiResponse<>(true, "Lecturer data has been successfully added", lecturer);
     }
 
     public ApiResponse<Lecturer> update(String id, Lecturer lecturer) {
         findById(id);
-        lecturer.setId(id);
+        if (canUpdate(id, lecturer)) {
+            lecturer.setId(id);
+        } else {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Lecturer data already exists");
+        }
         return new ApiResponse<>(true, "Lecturer data has been successfully updated", lecturerRepository.save(lecturer));
     }
 
@@ -168,6 +176,42 @@ public class LecturerService {
             lecturerActivities.add(lecturerActivity);
         }
         return lecturerActivities;
+    }
+
+    public boolean isDuplicate(Lecturer lecturer) {
+        Lecturer dbLecturer = lecturerRepository.findFirstByNipOrNidnOrEmailOrTelephone(lecturer.getNip(), lecturer.getNidn(), lecturer.getEmail(), lecturer.getTelephone())
+                .orElse(null);
+
+        return dbLecturer != null;
+    }
+
+    public boolean canUpdate(String id, Lecturer lecturer) {
+        Lecturer dbLecturer = findById(id);
+
+        if (dbLecturer.getNip().equals(lecturer.getNip()) && dbLecturer.getNidn().equals(lecturer.getNidn()) && dbLecturer.getEmail().equals(lecturer.getEmail()) && dbLecturer.getTelephone().equals(lecturer.getTelephone())) {
+            return true;
+        } else {
+            if (!dbLecturer.getNip().equals(lecturer.getNip())) {
+                if (lecturerRepository.findByNip(lecturer.getNip()).isPresent()) {
+                    return false;
+                }
+            }
+            if (!Objects.equals(dbLecturer.getNidn(), lecturer.getNidn())) {
+                if (lecturerRepository.findByNidn(lecturer.getNidn()).isPresent()) {
+                    return false;
+                }
+            }
+            if (!Objects.equals(dbLecturer.getEmail(), lecturer.getEmail())) {
+                if (lecturerRepository.findByEmail(lecturer.getEmail()).isPresent()) {
+                    return false;
+                }
+            }
+            if (!Objects.equals(dbLecturer.getTelephone(), lecturer.getTelephone())) {
+                return lecturerRepository.findByTelephone(lecturer.getTelephone()).isEmpty();
+            }
+
+            return true;
+        }
     }
 
 }
