@@ -51,6 +51,11 @@ public class Lecturer {
     private List<CourseSchedule> courseSchedules;
 
     @JsonIgnore
-    @OneToMany(mappedBy = "lecturer")
+    @OneToMany(mappedBy = "lecturer", cascade = CascadeType.ALL)
     private List<LecturerActivity> lecturerActivities;
+
+    @PreRemove
+    private void preRemove() {
+        courseSchedules.forEach(courseSchedule -> courseSchedule.setLecturer(null));
+    }
 }

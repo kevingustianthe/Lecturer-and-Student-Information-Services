@@ -37,4 +37,10 @@ public class Account {
 
     @OneToOne(mappedBy = "account")
     private Lecturer lecturer;
+
+    @PreRemove
+    private void preRemove() {
+        student.setAccount(null);
+        lecturer.setAccount(null);
+    }
 }

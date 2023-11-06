@@ -49,4 +49,9 @@ public class Student {
     @JsonIgnore
     @ManyToMany(mappedBy = "students")
     private List<CourseSchedule> courseSchedules;
+
+    @PreRemove
+    private void preRemove() {
+        courseSchedules.forEach(courseSchedule -> courseSchedule.setStudents(null));
+    }
 }

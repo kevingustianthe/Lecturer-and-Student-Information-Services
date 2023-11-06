@@ -47,7 +47,7 @@ public class CourseSchedule {
     @JoinColumn(name = "lecturer_id", referencedColumnName = "id")
     private Lecturer lecturer;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "tb_tr_course_schedule_student",
             joinColumns = @JoinColumn(name = "course_schedule_id"),
