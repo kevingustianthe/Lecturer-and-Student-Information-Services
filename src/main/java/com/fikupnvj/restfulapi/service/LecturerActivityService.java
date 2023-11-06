@@ -55,6 +55,9 @@ public class LecturerActivityService {
     public ApiResponse<LecturerActivity> create(LecturerActivity lecturerActivity) {
         validateDate(lecturerActivity);
         lecturerActivity.updateStatus();
+        if (isDuplicate(lecturerActivity)) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Lecturer activity data already exists");
+        }
 
         return new ApiResponse<>(true, "Lecturer activity data has been successfully added", lecturerActivityRepository.save(lecturerActivity));
     }
@@ -64,6 +67,9 @@ public class LecturerActivityService {
         lecturerActivity.setId(id);
         validateDate(lecturerActivity);
         lecturerActivity.updateStatus();
+        if (!canUpdate(id, lecturerActivity)) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Lecturer activity data already exists");
+        }
 
         return new ApiResponse<>(true, "Lecturer activity data has been successfully updated", lecturerActivityRepository.save(lecturerActivity));
     }
@@ -89,5 +95,20 @@ public class LecturerActivityService {
         for (LecturerActivity activity : activities) {
             updateStatus(activity);
         }
+    }
+
+    public boolean isDuplicate(LecturerActivity lecturerActivity) {
+        LecturerActivity dbLecturerActivity = lecturerActivityRepository.findByLecturerIdAndDescriptionAndStartDateAndEndDate(
+                lecturerActivity.getLecturer().getId(), lecturerActivity.getDescription(), lecturerActivity.getStartDate(), lecturerActivity.getEndDate()
+        ).orElse(null);
+
+        return dbLecturerActivity != null;
+    }
+
+    public boolean canUpdate(String id, LecturerActivity lecturerActivity) {
+        LecturerActivity dbLecturer = findById(id);
+        if (dbLecturer.getLecturer().getId().equals(lecturerActivity.getLecturer().getId()) && dbLecturer.getDescription().equals(lecturerActivity.getDescription()) && dbLecturer.getStartDate().equals(lecturerActivity.getStartDate()) && dbLecturer.getEndDate().equals(lecturerActivity.getEndDate())) {
+            return true;
+        } else return !isDuplicate(lecturerActivity);
     }
 }
