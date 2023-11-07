@@ -19,7 +19,7 @@ public class AccountController {
 
     @GetMapping
     public ApiResponse<List<AccountResponse>> getAll(Account admin) {
-        return accountService.getAll(admin);
+        return accountService.getAll();
     }
 
     @GetMapping("/me")
@@ -29,7 +29,7 @@ public class AccountController {
 
     @PostMapping("/find")
     public ApiResponse<AccountResponse> getById(Account admin, @RequestBody AccountResponse accountResponse) {
-        return accountService.getById(admin, accountResponse.getEmail());
+        return accountService.getById(accountResponse.getEmail());
     }
 
     @GetMapping("/search")
@@ -49,11 +49,11 @@ public class AccountController {
 
     @PostMapping("/update")
     public ApiResponse<AccountResponse> updateById(Account admin, @RequestBody UpdateAccountRequest request) {
-        return accountService.updateById(admin, request);
+        return accountService.updateById(request);
     }
 
     @DeleteMapping("/delete")
     public ApiResponse<AccountResponse> deleteAccount(Account admin, @RequestBody UpdateAccountRequest request) {
-        return accountService.deleteAccount(admin, request);
+        return accountService.deleteAccount(request);
     }
 }

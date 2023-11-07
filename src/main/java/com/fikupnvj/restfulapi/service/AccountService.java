@@ -23,7 +23,7 @@ public class AccountService {
     @Autowired
     private AccountRepository accountRepository;
 
-    public ApiResponse<List<AccountResponse>> getAll(Account account) {
+    public ApiResponse<List<AccountResponse>> getAll() {
         List<Account> accountList = accountRepository.findAll();
         List<AccountResponse> accountResponses = toListAccountResponse(accountList);
 
@@ -36,7 +36,7 @@ public class AccountService {
         return new ApiResponse<>(true, "Account successfully retrieved", accountResponse);
     }
 
-    public ApiResponse<AccountResponse> getById(Account account, String email) {
+    public ApiResponse<AccountResponse> getById(String email) {
         Account acc = accountRepository.findById(email)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Account not found"));
 
@@ -80,7 +80,7 @@ public class AccountService {
         return new ApiResponse<>(true, "Update successfully", toResponseAccount(account));
     }
 
-    public ApiResponse<AccountResponse> updateById(Account account, UpdateAccountRequest request) {
+    public ApiResponse<AccountResponse> updateById(UpdateAccountRequest request) {
         Account acc = accountRepository.findById(request.getEmail())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Account not found"));
 
@@ -103,7 +103,7 @@ public class AccountService {
         return new ApiResponse<>(true, "Update successfully", toResponseAccount(acc));
     }
 
-    public ApiResponse<AccountResponse> deleteAccount(Account account, UpdateAccountRequest request) {
+    public ApiResponse<AccountResponse> deleteAccount(UpdateAccountRequest request) {
         Account acc = accountRepository.findById(request.getEmail())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Account not found"));
 
