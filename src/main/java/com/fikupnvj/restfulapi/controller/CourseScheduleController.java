@@ -7,6 +7,7 @@ import com.fikupnvj.restfulapi.model.CourseScheduleResponse;
 import com.fikupnvj.restfulapi.service.CourseScheduleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -48,6 +49,11 @@ public class CourseScheduleController {
     @PutMapping("/{id}")
     public ApiResponse<CourseSchedule> update(Account admin, @PathVariable String id, @RequestBody CourseSchedule courseSchedule) {
         return courseScheduleService.update(id, courseSchedule);
+    }
+
+    @PutMapping("/{id}/student/import")
+    public ApiResponse<CourseSchedule> updateCourseScheduleStudents(Account admin, @PathVariable String id, @RequestParam("file") MultipartFile file) {
+        return courseScheduleService.updateCourseScheduleStudents(id, file);
     }
 
     @DeleteMapping("/{id}")

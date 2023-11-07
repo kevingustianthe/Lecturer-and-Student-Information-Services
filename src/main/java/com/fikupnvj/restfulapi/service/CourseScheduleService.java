@@ -1,16 +1,22 @@
 package com.fikupnvj.restfulapi.service;
 
 import com.fikupnvj.restfulapi.entity.CourseSchedule;
+import com.fikupnvj.restfulapi.entity.Student;
 import com.fikupnvj.restfulapi.model.ApiResponse;
 import com.fikupnvj.restfulapi.model.CourseScheduleResponse;
 import com.fikupnvj.restfulapi.repository.CourseScheduleRepository;
+import com.fikupnvj.restfulapi.repository.StudentRepository;
+import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 
@@ -19,6 +25,9 @@ public class CourseScheduleService {
 
     @Autowired
     private CourseScheduleRepository courseScheduleRepository;
+
+    @Autowired
+    private StudentRepository studentRepository;
 
     public ApiResponse<List<CourseScheduleResponse>> getAll() {
         List<CourseSchedule> courseSchedules = courseScheduleRepository.findAll();
@@ -94,10 +103,66 @@ public class CourseScheduleService {
         return new ApiResponse<>(true, "Course schedule data has been successfully updated", courseScheduleRepository.save(courseSchedule));
     }
 
+    public ApiResponse<CourseSchedule> updateCourseScheduleStudents(String id, MultipartFile file) {
+        CourseSchedule courseSchedule = findById(id);
+        List<Student> students = getListStudentsFromExcel(file);
+
+        students.forEach(student -> {
+            if (!courseSchedule.getStudents().contains(student)) {
+                courseSchedule.getStudents().add(student);
+            }
+        });
+        courseScheduleRepository.save(courseSchedule);
+
+        return new ApiResponse<>(true, "Course schedule students data has been successfully updated", courseSchedule);
+    }
+
     public ApiResponse<CourseSchedule> delete(String id) {
         CourseSchedule courseSchedule = findById(id);
         courseScheduleRepository.delete(courseSchedule);
         return new ApiResponse<>(true, "Course schedule data has been successfully deleted", courseSchedule);
+    }
+
+    public List<Student> getListStudentsFromExcel(MultipartFile file) {
+        try {
+            Workbook workbook = new XSSFWorkbook(file.getInputStream());
+            Sheet sheet = workbook.getSheetAt(0);
+            Iterator<Row> rows = sheet.iterator();
+            DataFormatter df = new DataFormatter();
+            List<Student> students = new ArrayList<>();
+
+            int rowNumber = 0;
+            while (rows.hasNext()) {
+                Row currentRow = rows.next();
+                if (rowNumber == 0) {
+                    rowNumber++;
+                    continue;
+                }
+
+                Iterator<Cell> cellsInRow = currentRow.iterator();
+                String name = new String();
+                String nim = new String();
+                String email = new String();
+
+                int cellIndex = 0;
+                while (cellsInRow.hasNext()) {
+                    Cell currentCell = cellsInRow.next();
+                    switch (cellIndex) {
+                        case 1 -> name = currentCell.getStringCellValue();
+                        case 2 -> nim = df.formatCellValue(currentCell);
+                        case 3 -> email = currentCell.getStringCellValue();
+                        default -> {}
+                    }
+                    cellIndex++;
+                }
+                studentRepository.findByNameAndNimAndEmail(name, nim, email).ifPresent(students::add);
+            }
+
+            workbook.close();
+            return students;
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, e.getMessage());
+        }
     }
 
     public CourseScheduleResponse toCourseScheduleResponse(CourseSchedule courseSchedule) {
