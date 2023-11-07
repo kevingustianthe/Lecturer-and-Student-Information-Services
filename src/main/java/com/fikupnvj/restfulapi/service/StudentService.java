@@ -6,13 +6,19 @@ import com.fikupnvj.restfulapi.model.ApiResponse;
 import com.fikupnvj.restfulapi.model.CourseScheduleResponse;
 import com.fikupnvj.restfulapi.model.StudentResponse;
 import com.fikupnvj.restfulapi.repository.StudentRepository;
+import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.io.InputStream;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 
@@ -24,6 +30,9 @@ public class StudentService {
 
     @Autowired
     private CourseScheduleService courseScheduleService;
+
+    @Autowired
+    private EmailService emailService;
 
     public ApiResponse<List<Student>> getAll() {
         return new ApiResponse<>(true, "Data successfully retrieved", studentRepository.findAll());
@@ -140,6 +149,103 @@ public class StudentService {
         Student student = findStudentById(id);
         studentRepository.delete(student);
         return new ApiResponse<>(true, "Student data has been successfully deleted", student);
+    }
+
+    public List<Student> parseExcelImportStudent(InputStream is) {
+        try {
+            Workbook workbook = new XSSFWorkbook(is);
+            Sheet sheet = workbook.getSheetAt(0);
+            Iterator<Row> rows = sheet.iterator();
+            DataFormatter df = new DataFormatter();
+            List<Student> students = new ArrayList<>();
+
+            int rowNumber = 0;
+            while (rows.hasNext()) {
+                Row currentRow = rows.next();
+                if (rowNumber == 0) {
+                    rowNumber++;
+                    continue;
+                }
+
+                Iterator<Cell> cellsInRow = currentRow.iterator();
+                Student student = new Student();
+
+                int cellIndex = 0;
+                while (cellsInRow.hasNext()) {
+                    Cell currentCell = cellsInRow.next();
+                    switch (cellIndex) {
+                        case 1 -> {
+                            String name = currentCell.getStringCellValue();
+                            student.setName(name);
+                        }
+                        case 2 -> {
+                            String nim = df.formatCellValue(currentCell);
+                            student.setNim(nim);
+                        }
+                        case 3 -> {
+                            String classOf = df.formatCellValue(currentCell);
+                            student.setClassOf(classOf);
+                        }
+                        case 4 -> {
+                            String email = currentCell.getStringCellValue();
+                            if (emailService.checkValidEmail(email)) {
+                                student.setEmail(email);
+                            } else {
+                                student.setEmail("");
+                            }
+                        }
+                        case 5 -> {
+                            String telephone = df.formatCellValue(currentCell);
+                            student.setTelephone(telephone);
+                        }
+                        case 6 -> {
+                            String studyProgram = currentCell.getStringCellValue();
+                            student.setStudyProgram(studyProgram);
+                        }
+                        case 7 -> {
+                            String interest = currentCell.getStringCellValue();
+                            student.setInterest(interest);
+                        }
+                        default -> {
+                        }
+                    }
+                    cellIndex++;
+                }
+
+                if (!Objects.equals(student.getName(), "") && !Objects.equals(student.getNim(), "") && !Objects.equals(student.getClassOf(), "") && !Objects.equals(student.getEmail(), "") && !Objects.equals(student.getTelephone(), "") && !Objects.equals(student.getStudyProgram(), "") && !Objects.equals(student.getInterest(), "")) {
+                    if (!isDuplicate(student)) {
+                        students.add(student);
+                    }
+                }
+            }
+
+            workbook.close();
+            return students;
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, e.getMessage());
+        }
+    }
+
+    public ApiResponse<List<Student>> importExcelStudentData(MultipartFile file) {
+        List<Student> students;
+        try {
+            students = parseExcelImportStudent(file.getInputStream());
+            if (students.isEmpty()) {
+                return new ApiResponse<>(true, "Student data already exists or data is incomplete", students);
+            }
+
+            students.forEach(student -> {
+                try {
+                    create(student);
+                } catch (Exception e) {
+                    throw new ResponseStatusException(HttpStatus.CONFLICT, e.getMessage());
+                }
+            });
+
+            return new ApiResponse<>(true, "Student data has been successfully added", students);
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, e.getMessage());
+        }
     }
 
     public StudentResponse toStudentResponse(Student student) {

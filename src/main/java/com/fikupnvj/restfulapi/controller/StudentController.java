@@ -8,6 +8,7 @@ import com.fikupnvj.restfulapi.model.StudentResponse;
 import com.fikupnvj.restfulapi.service.StudentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -63,6 +64,11 @@ public class StudentController {
     @PostMapping
     public ApiResponse<Student> create(Account admin, @RequestBody Student student) {
         return studentService.create(student);
+    }
+
+    @PostMapping("/import")
+    public ApiResponse<List<Student>> importExcelStudentData(Account admin, @RequestParam("file") MultipartFile file) {
+        return studentService.importExcelStudentData(file);
     }
 
     @PutMapping("/{id}")
