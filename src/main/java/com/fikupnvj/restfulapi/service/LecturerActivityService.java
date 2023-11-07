@@ -37,16 +37,17 @@ public class LecturerActivityService {
     }
 
     public ApiResponse<List<LecturerActivity>> getByParam(LecturerActivity.Status status, String name) {
-        List<LecturerActivity> lecturerActivities;
-        if (Objects.equals(name, "")) {
-            lecturerActivities = lecturerActivityRepository.findByStatus(status)
-                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Data not found"));
-        } else if (status == null) {
-            lecturerActivities = lecturerActivityRepository.findByLecturerNameContains(name)
-                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Data not found"));
-        } else {
-            lecturerActivities = lecturerActivityRepository.findByStatusAndLecturerNameContains(status, name)
-                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Data not found"));
+        List<LecturerActivity> lecturerActivities = lecturerActivityRepository.findAll();
+        if (status != null) {
+            lecturerActivities = lecturerActivities.stream().filter(
+                    lecturerActivity -> lecturerActivity.getStatus().equals(status)
+            ).toList();
+        }
+
+        if (!Objects.equals(name, "")) {
+            lecturerActivities = lecturerActivities.stream().filter(
+                    lecturerActivity -> lecturerActivity.getLecturer().getName().toLowerCase().contains(name.toLowerCase())
+            ).toList();
         }
 
         return new ApiResponse<>(true, "Data successfully retrieved", lecturerActivities);
