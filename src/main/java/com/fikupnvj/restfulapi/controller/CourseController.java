@@ -30,8 +30,10 @@ public class CourseController {
     public ApiResponse<List<Course>> getByParam(Account account,
             @RequestParam(name = "name", required = false, defaultValue = "") String name,
             @RequestParam(name = "semester", required = false, defaultValue = "0") int semester,
-            @RequestParam(name = "studyProgram", required = false, defaultValue = "") String studyProgram) {
-        return courseService.getByParam(name, semester, studyProgram);
+            @RequestParam(name = "studyProgram", required = false, defaultValue = "") String studyProgram,
+            @RequestParam(name = "sortBy", required = false, defaultValue = "name") String sortBy,
+            @RequestParam(name = "order", required = false, defaultValue = "desc") String order) {
+        return courseService.getByParam(name, semester, studyProgram, sortBy, order);
     }
 
     @PostMapping

@@ -5,6 +5,7 @@ import com.fikupnvj.restfulapi.model.ApiResponse;
 import com.fikupnvj.restfulapi.model.CourseScheduleResponse;
 import com.fikupnvj.restfulapi.repository.CourseScheduleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -43,8 +44,11 @@ public class CourseScheduleService {
             String studyProgram,
             String academicPeriod,
             String room,
-            String lecturerName) {
-        List<CourseSchedule> courseSchedules = courseScheduleRepository.findAll();
+            String lecturerName,
+            String sortBy,
+            String order) {
+        Sort sort = Sort.by(Sort.Order.by(sortBy).with(Sort.Direction.fromString(order)));
+        List<CourseSchedule> courseSchedules = courseScheduleRepository.findAll(sort);
 
         if (!Objects.equals(courseName, "")) {
             courseSchedules = courseSchedules.stream().filter(schedule -> schedule.getCourse().getName().contains(courseName)).toList();

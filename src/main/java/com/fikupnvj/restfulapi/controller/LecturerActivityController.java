@@ -29,8 +29,10 @@ public class LecturerActivityController {
     @GetMapping("/search")
     public ApiResponse<List<LecturerActivity>> getByStatus(Account account,
             @RequestParam(name = "status", required = false, defaultValue = "") LecturerActivity.Status status,
-            @RequestParam(name = "name", required = false, defaultValue = "") String name) {
-        return lecturerActivityService.getByParam(status, name);
+            @RequestParam(name = "name", required = false, defaultValue = "") String name,
+            @RequestParam(name = "sortBy", required = false, defaultValue = "createdAt") String sortBy,
+            @RequestParam(name = "order", required = false, defaultValue = "desc") String order) {
+        return lecturerActivityService.getByParam(status, name, sortBy, order);
     }
 
     @PostMapping

@@ -4,6 +4,7 @@ import com.fikupnvj.restfulapi.entity.LecturerActivity;
 import com.fikupnvj.restfulapi.model.ApiResponse;
 import com.fikupnvj.restfulapi.repository.LecturerActivityRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -36,8 +37,9 @@ public class LecturerActivityService {
         return new ApiResponse<>(true, "Data successfully retrieved", lecturerActivity);
     }
 
-    public ApiResponse<List<LecturerActivity>> getByParam(LecturerActivity.Status status, String name) {
-        List<LecturerActivity> lecturerActivities = lecturerActivityRepository.findAll();
+    public ApiResponse<List<LecturerActivity>> getByParam(LecturerActivity.Status status, String name, String sortBy, String order) {
+        Sort sort = Sort.by(Sort.Order.by(sortBy).with(Sort.Direction.fromString(order)));
+        List<LecturerActivity> lecturerActivities = lecturerActivityRepository.findAll(sort);
         if (status != null) {
             lecturerActivities = lecturerActivities.stream().filter(
                     lecturerActivity -> lecturerActivity.getStatus().equals(status)

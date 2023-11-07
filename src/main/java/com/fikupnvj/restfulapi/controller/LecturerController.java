@@ -48,8 +48,10 @@ public class LecturerController {
     public ApiResponse<List<Lecturer>> getByParam(Account account,
             @RequestParam(name = "name", required = false, defaultValue = "") String name,
             @RequestParam(name = "studyProgram", required = false, defaultValue = "") String studyProgram,
-            @RequestParam(name = "expertise", required = false, defaultValue = "") String expertise) {
-        return lecturerService.getByParam(name, studyProgram, expertise);
+            @RequestParam(name = "expertise", required = false, defaultValue = "") String expertise,
+            @RequestParam(name = "sortBy", required = false, defaultValue = "id") String sortBy,
+            @RequestParam(name = "order", required = false, defaultValue = "desc") String order) {
+        return lecturerService.getByParam(name, studyProgram, expertise, sortBy, order);
     }
 
     @GetMapping("/{id}/activity")

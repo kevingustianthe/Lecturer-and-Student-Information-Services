@@ -34,8 +34,10 @@ public class CourseScheduleController {
             @RequestParam(name = "studyProgram", required = false, defaultValue = "") String studyProgram,
             @RequestParam(name = "academicPeriod", required = false, defaultValue = "") String academicPeriod,
             @RequestParam(name = "room", required = false, defaultValue = "") String room,
-            @RequestParam(name = "lecturerName", required = false, defaultValue = "") String lecturerName) {
-        return courseScheduleService.getByParam(courseName, semester, studyProgram, academicPeriod, room, lecturerName);
+            @RequestParam(name = "lecturerName", required = false, defaultValue = "") String lecturerName,
+            @RequestParam(name = "sortBy", required = false, defaultValue = "day") String sortBy,
+            @RequestParam(name = "order", required = false, defaultValue = "asc") String order) {
+        return courseScheduleService.getByParam(courseName, semester, studyProgram, academicPeriod, room, lecturerName, sortBy, order);
     }
 
     @PostMapping

@@ -9,6 +9,7 @@ import com.fikupnvj.restfulapi.model.LecturerActivityResponse;
 import com.fikupnvj.restfulapi.model.LecturerResponse;
 import com.fikupnvj.restfulapi.repository.LecturerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -80,8 +81,9 @@ public class LecturerService {
         return new ApiResponse<>(true, "Data", toLecturerResponse(lecturer));
     }
 
-    public ApiResponse<List<Lecturer>> getByParam(String name, String studyProgram, String expertise) {
-        List<Lecturer> lecturers = lecturerRepository.findAll();
+    public ApiResponse<List<Lecturer>> getByParam(String name, String studyProgram, String expertise, String sortBy, String order) {
+        Sort sort = Sort.by(Sort.Order.by(sortBy).with(Sort.Direction.fromString(order)));
+        List<Lecturer> lecturers = lecturerRepository.findAll(sort);
 
         if (!Objects.equals(name, "")) {
             lecturers = lecturers.stream().filter(

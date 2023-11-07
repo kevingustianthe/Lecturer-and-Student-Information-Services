@@ -49,8 +49,10 @@ public class StudentController {
             @RequestParam(name = "nim", required = false, defaultValue = "") String nim,
             @RequestParam(name = "classOf", required = false, defaultValue = "") String classOf,
             @RequestParam(name = "studyProgram", required = false, defaultValue = "") String studyProgram,
-            @RequestParam(name = "interest", required = false, defaultValue = "") String interest) {
-        return studentService.getByParam(name, nim, classOf, studyProgram, interest);
+            @RequestParam(name = "interest", required = false, defaultValue = "") String interest,
+            @RequestParam(name = "sortBy", required = false, defaultValue = "nim") String sortBy,
+            @RequestParam(name = "order", required = false, defaultValue = "desc") String order) {
+        return studentService.getByParam(name, nim, classOf, studyProgram, interest, sortBy, order);
     }
 
     @GetMapping("/{id}/course-schedule")

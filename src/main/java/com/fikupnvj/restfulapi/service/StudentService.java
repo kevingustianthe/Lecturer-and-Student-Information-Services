@@ -8,6 +8,7 @@ import com.fikupnvj.restfulapi.model.CourseScheduleResponse;
 import com.fikupnvj.restfulapi.model.StudentResponse;
 import com.fikupnvj.restfulapi.repository.StudentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -76,8 +77,9 @@ public class StudentService {
         return new ApiResponse<>(true, "Data successfully retrieved", studentResponse);
     }
 
-    public ApiResponse<List<Student>> getByParam(String name, String nim, String classOf, String studyProgram, String interest) {
-        List<Student> students = studentRepository.findAll();
+    public ApiResponse<List<Student>> getByParam(String name, String nim, String classOf, String studyProgram, String interest, String sortBy, String order) {
+        Sort sort = Sort.by(Sort.Order.by(sortBy).with(Sort.Direction.fromString(order)));
+        List<Student> students = studentRepository.findAll(sort);
 
         if (!Objects.equals(name, "")) {
             students = students.stream().filter(
