@@ -9,6 +9,7 @@ import com.fikupnvj.restfulapi.model.LecturerResponse;
 import com.fikupnvj.restfulapi.service.LecturerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -67,6 +68,11 @@ public class LecturerController {
     @PostMapping
     public ApiResponse<Lecturer> create(Account admin, @RequestBody Lecturer lecturer) {
         return lecturerService.create(lecturer);
+    }
+
+    @PostMapping("/import")
+    public ApiResponse<List<Lecturer>> importExcelLecturerData(Account admin, @RequestParam("file") MultipartFile file) {
+        return lecturerService.importExcelLecturerData(file);
     }
 
     @PutMapping("/{id}")
