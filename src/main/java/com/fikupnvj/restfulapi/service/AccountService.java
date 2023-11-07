@@ -49,6 +49,30 @@ public class AccountService {
         return new ApiResponse<>(true, "Account successfully found", accountResponse);
     }
 
+    public ApiResponse<List<AccountResponse>> getByParam(String email, String role, Boolean status) {
+        List<Account> accounts = accountRepository.findAll();
+
+        if (!Objects.equals(email, "")) {
+            accounts = accounts.stream().filter(
+                    account -> account.getEmail().toLowerCase().contains(email.toLowerCase())
+            ).toList();
+        }
+
+        if (!Objects.equals(role, "")) {
+            accounts = accounts.stream().filter(
+                    account -> account.getRole().equalsIgnoreCase(role)
+            ).toList();
+        }
+
+        if (status != null) {
+            accounts = accounts.stream().filter(
+                    account -> account.getStatus().equals(status)
+            ).toList();
+        }
+
+        return new ApiResponse<>(true, "Data successfully retrieved", toListAccountResponse(accounts));
+    }
+
     public ApiResponse<AccountResponse> updateMe(Account account, UpdateAccountRequest request) {
         if (Objects.nonNull(request.getPassword())) {
             account.setPassword(BCrypt.hashpw(request.getPassword(), BCrypt.gensalt()));
@@ -98,5 +122,15 @@ public class AccountService {
         accountResponse.setStatus(account.getStatus());
 
         return accountResponse;
+    }
+
+    private List<AccountResponse> toListAccountResponse(List<Account> accounts) {
+        List<AccountResponse> accountResponses = new ArrayList<>();
+        for (Account account : accounts) {
+            AccountResponse accountResponse = toResponseAccount(account);
+            accountResponses.add(accountResponse);
+        }
+
+        return accountResponses;
     }
 }

@@ -32,6 +32,14 @@ public class AccountController {
         return accountService.getById(admin, accountResponse.getEmail());
     }
 
+    @GetMapping("/search")
+    public ApiResponse<List<AccountResponse>> getByParam(Account account,
+            @RequestParam(name = "email", required = false, defaultValue = "") String email,
+            @RequestParam(name = "role", required = false, defaultValue = "") String role,
+            @RequestParam(name = "status", required = false, defaultValue = "") Boolean status) {
+        return accountService.getByParam(email, role, status);
+    }
+
     @PostMapping("/update/me")
     public ApiResponse<AccountResponse> updateMe(Account account, @RequestBody UpdateAccountRequest request) {
         return accountService.updateMe(account, request);
