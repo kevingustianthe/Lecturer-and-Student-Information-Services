@@ -53,14 +53,18 @@ public class AuthService {
             Account account = accountRepository.findById(request.getEmail())
                     .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Email or password invalid"));
 
-            if (account.getStatus() && BCrypt.checkpw(request.getPassword(), account.getPassword())) {
+            if (!account.getStatus()) {
+                throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Account not verified");
+            }
+
+            if (BCrypt.checkpw(request.getPassword(), account.getPassword())) {
                 account.setToken(UUID.randomUUID().toString());
                 account.setTokenExpiredAt(System.currentTimeMillis() + (60 * 60 * 1000));
                 accountRepository.save(account);
 
                 return new ApiResponse<>(true, "Login Success", new TokenResponse(account.getToken(), account.getTokenExpiredAt()));
             } else {
-                throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Account not verified");
+                throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Email or password invalid");
             }
         } catch (Exception e) {
             return new ApiResponse<>(false, e.getMessage(), null);
