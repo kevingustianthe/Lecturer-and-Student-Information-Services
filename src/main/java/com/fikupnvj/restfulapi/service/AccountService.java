@@ -7,6 +7,7 @@ import com.fikupnvj.restfulapi.model.ApiResponse;
 import com.fikupnvj.restfulapi.repository.AccountRepository;
 import com.fikupnvj.restfulapi.tool.BCrypt;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -49,8 +50,9 @@ public class AccountService {
         return new ApiResponse<>(true, "Account successfully found", accountResponse);
     }
 
-    public ApiResponse<List<AccountResponse>> getByParam(String email, String role, Boolean status) {
-        List<Account> accounts = accountRepository.findAll();
+    public ApiResponse<List<AccountResponse>> getByParam(String email, String role, Boolean status, String sortBy, String order) {
+        Sort sort = Sort.by(Sort.Order.by(sortBy).with(Sort.Direction.fromString(order)));
+        List<Account> accounts = accountRepository.findAll(sort);
 
         if (!Objects.equals(email, "")) {
             accounts = accounts.stream().filter(

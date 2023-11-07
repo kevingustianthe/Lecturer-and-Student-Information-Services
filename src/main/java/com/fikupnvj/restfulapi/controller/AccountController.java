@@ -36,8 +36,10 @@ public class AccountController {
     public ApiResponse<List<AccountResponse>> getByParam(Account account,
             @RequestParam(name = "email", required = false, defaultValue = "") String email,
             @RequestParam(name = "role", required = false, defaultValue = "") String role,
-            @RequestParam(name = "status", required = false, defaultValue = "") Boolean status) {
-        return accountService.getByParam(email, role, status);
+            @RequestParam(name = "status", required = false, defaultValue = "") Boolean status,
+            @RequestParam(name = "sortBy", required = false, defaultValue = "email") String sortBy,
+            @RequestParam(name = "order", required = false, defaultValue = "asc") String order) {
+        return accountService.getByParam(email, role, status, sortBy, order);
     }
 
     @PostMapping("/update/me")
