@@ -1,7 +1,6 @@
 package com.fikupnvj.restfulapi.service;
 
 import com.fikupnvj.restfulapi.entity.Account;
-import com.fikupnvj.restfulapi.entity.CourseSchedule;
 import com.fikupnvj.restfulapi.entity.Student;
 import com.fikupnvj.restfulapi.model.ApiResponse;
 import com.fikupnvj.restfulapi.model.CourseScheduleResponse;
@@ -13,12 +12,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.time.DayOfWeek;
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 @Service
 public class StudentService {

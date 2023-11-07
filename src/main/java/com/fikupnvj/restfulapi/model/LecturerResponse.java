@@ -1,6 +1,5 @@
 package com.fikupnvj.restfulapi.model;
 
-import com.fikupnvj.restfulapi.entity.Lecturer;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
