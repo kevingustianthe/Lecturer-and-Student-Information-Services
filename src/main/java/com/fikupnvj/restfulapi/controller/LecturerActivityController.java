@@ -27,7 +27,7 @@ public class LecturerActivityController {
     }
 
     @GetMapping("/search")
-    public ApiResponse<List<LecturerActivity>> getByStatus(Account account,
+    public ApiResponse<List<LecturerActivity>> getByParam(Account account,
             @RequestParam(name = "status", required = false, defaultValue = "") LecturerActivity.Status status,
             @RequestParam(name = "name", required = false, defaultValue = "") String name,
             @RequestParam(name = "sortBy", required = false, defaultValue = "createdAt") String sortBy,
