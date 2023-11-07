@@ -25,12 +25,7 @@ public class AccountService {
 
     public ApiResponse<List<AccountResponse>> getAll(Account account) {
         List<Account> accountList = accountRepository.findAll();
-        List<AccountResponse> accountResponses = new ArrayList<>();
-
-        for (Account acc : accountList) {
-            AccountResponse accountResponse = toResponseAccount(acc);
-            accountResponses.add(accountResponse);
-        }
+        List<AccountResponse> accountResponses = toListAccountResponse(accountList);
 
         return new ApiResponse<>(true, "Account successfully retrieved", accountResponses);
     }
