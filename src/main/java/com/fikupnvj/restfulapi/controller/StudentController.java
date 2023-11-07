@@ -6,6 +6,7 @@ import com.fikupnvj.restfulapi.model.ApiResponse;
 import com.fikupnvj.restfulapi.model.CourseScheduleResponse;
 import com.fikupnvj.restfulapi.model.StudentResponse;
 import com.fikupnvj.restfulapi.service.StudentService;
+import io.swagger.v3.oas.annotations.Parameter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -20,32 +21,32 @@ public class StudentController {
     private StudentService studentService;
 
     @GetMapping
-    public ApiResponse<List<Student>> getAll(Account account) {
+    public ApiResponse<List<Student>> getAll(@Parameter(hidden = true) Account account, @RequestHeader("X-API-TOKEN") String token) {
         return studentService.getAll();
     }
 
     @GetMapping("/me")
-    public ApiResponse<StudentResponse> getMe(Account student) {
+    public ApiResponse<StudentResponse> getMe(@Parameter(hidden = true) Account student, @RequestHeader("X-API-TOKEN") String token) {
         return studentService.getMe(student);
     }
 
     @GetMapping("/me/course-schedule")
-    public ApiResponse<List<CourseScheduleResponse>> getMeCourseSchedule(Account student) {
+    public ApiResponse<List<CourseScheduleResponse>> getMeCourseSchedule(@Parameter(hidden = true) Account student, @RequestHeader("X-API-TOKEN") String token) {
         return studentService.getMeCourseSchedule(student);
     }
 
     @GetMapping("/me/course-schedule/today")
-    public ApiResponse<List<CourseScheduleResponse>> getMeCourseScheduleToday(Account student) {
+    public ApiResponse<List<CourseScheduleResponse>> getMeCourseScheduleToday(@Parameter(hidden = true) Account student, @RequestHeader("X-API-TOKEN") String token) {
         return studentService.getMeCourseScheduleToday(student);
     }
 
     @GetMapping("/{id}")
-    public ApiResponse<StudentResponse> getById(Account account, @PathVariable String id) {
+    public ApiResponse<StudentResponse> getById(@Parameter(hidden = true) Account account, @RequestHeader("X-API-TOKEN") String token, @PathVariable String id) {
         return studentService.getById(id);
     }
 
     @GetMapping("/search")
-    public ApiResponse<List<Student>> getByParam(Account account,
+    public ApiResponse<List<Student>> getByParam(@Parameter(hidden = true) Account account, @RequestHeader("X-API-TOKEN") String token,
             @RequestParam(name = "name", required = false, defaultValue = "") String name,
             @RequestParam(name = "nim", required = false, defaultValue = "") String nim,
             @RequestParam(name = "classOf", required = false, defaultValue = "") String classOf,
@@ -57,27 +58,27 @@ public class StudentController {
     }
 
     @GetMapping("/{id}/course-schedule")
-    public ApiResponse<List<CourseScheduleResponse>> getStudentCourseSchedule(Account account, @PathVariable String id) {
+    public ApiResponse<List<CourseScheduleResponse>> getStudentCourseSchedule(@Parameter(hidden = true) Account account, @RequestHeader("X-API-TOKEN") String token, @PathVariable String id) {
         return studentService.getStudentCourseSchedule(id);
     }
 
     @PostMapping
-    public ApiResponse<Student> create(Account admin, @RequestBody Student student) {
+    public ApiResponse<Student> create(@Parameter(hidden = true) Account admin, @RequestHeader("X-API-TOKEN") String token, @RequestBody Student student) {
         return studentService.create(student);
     }
 
     @PostMapping("/import")
-    public ApiResponse<List<Student>> importExcelStudentData(Account admin, @RequestParam("file") MultipartFile file) {
+    public ApiResponse<List<Student>> importExcelStudentData(@Parameter(hidden = true) Account admin, @RequestHeader("X-API-TOKEN") String token, @RequestParam("file") MultipartFile file) {
         return studentService.importExcelStudentData(file);
     }
 
     @PutMapping("/{id}")
-    public ApiResponse<Student> update(Account admin, @PathVariable String id, @RequestBody Student student) {
+    public ApiResponse<Student> update(@Parameter(hidden = true) Account admin, @RequestHeader("X-API-TOKEN") String token, @PathVariable String id, @RequestBody Student student) {
         return studentService.update(id, student);
     }
 
     @DeleteMapping("/{id}")
-    public ApiResponse<Student> delete(Account admin, @PathVariable String id) {
+    public ApiResponse<Student> delete(@Parameter(hidden = true) Account admin, @RequestHeader("X-API-TOKEN") String token, @PathVariable String id) {
         return studentService.delete(id);
     }
 }

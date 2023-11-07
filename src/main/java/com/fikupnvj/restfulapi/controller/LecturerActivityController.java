@@ -4,6 +4,7 @@ import com.fikupnvj.restfulapi.entity.Account;
 import com.fikupnvj.restfulapi.entity.LecturerActivity;
 import com.fikupnvj.restfulapi.model.ApiResponse;
 import com.fikupnvj.restfulapi.service.LecturerActivityService;
+import io.swagger.v3.oas.annotations.Parameter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,17 +18,17 @@ public class LecturerActivityController {
     private LecturerActivityService lecturerActivityService;
 
     @GetMapping
-    public ApiResponse<List<LecturerActivity>> getAll(Account account) {
+    public ApiResponse<List<LecturerActivity>> getAll(@Parameter(hidden = true) Account account, @RequestHeader("X-API-TOKEN") String token) {
         return lecturerActivityService.getAll();
     }
 
     @GetMapping("/{id}")
-    public ApiResponse<LecturerActivity> getById(Account account, @PathVariable String id) {
+    public ApiResponse<LecturerActivity> getById(@Parameter(hidden = true) Account account, @RequestHeader("X-API-TOKEN") String token, @PathVariable String id) {
         return lecturerActivityService.getById(id);
     }
 
     @GetMapping("/search")
-    public ApiResponse<List<LecturerActivity>> getByParam(Account account,
+    public ApiResponse<List<LecturerActivity>> getByParam(@Parameter(hidden = true) Account account, @RequestHeader("X-API-TOKEN") String token,
             @RequestParam(name = "status", required = false, defaultValue = "") LecturerActivity.Status status,
             @RequestParam(name = "name", required = false, defaultValue = "") String name,
             @RequestParam(name = "sortBy", required = false, defaultValue = "createdAt") String sortBy,
@@ -36,17 +37,17 @@ public class LecturerActivityController {
     }
 
     @PostMapping
-    public ApiResponse<LecturerActivity> create(Account admin, @RequestBody LecturerActivity lecturerActivity) {
+    public ApiResponse<LecturerActivity> create(@Parameter(hidden = true) Account admin, @RequestHeader("X-API-TOKEN") String token, @RequestBody LecturerActivity lecturerActivity) {
         return lecturerActivityService.create(lecturerActivity);
     }
 
     @PutMapping("/{id}")
-    public ApiResponse<LecturerActivity> update(Account admin, @PathVariable String id, @RequestBody LecturerActivity lecturerActivity) {
+    public ApiResponse<LecturerActivity> update(@Parameter(hidden = true) Account admin, @RequestHeader("X-API-TOKEN") String token, @PathVariable String id, @RequestBody LecturerActivity lecturerActivity) {
         return lecturerActivityService.update(id, lecturerActivity);
     }
 
     @DeleteMapping("/{id}")
-    public ApiResponse<LecturerActivity> delete(Account admin, @PathVariable String id) {
+    public ApiResponse<LecturerActivity> delete(@Parameter(hidden = true) Account admin, @RequestHeader("X-API-TOKEN") String token, @PathVariable String id) {
         return lecturerActivityService.delete(id);
     }
 }
