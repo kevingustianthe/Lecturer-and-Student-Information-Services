@@ -24,7 +24,7 @@ public class CourseScheduleController {
     }
 
     @GetMapping("/{id}")
-    public ApiResponse<CourseScheduleResponse> getById(Account account, @PathVariable String id) {
+    public ApiResponse<CourseSchedule> getById(Account account, @PathVariable String id) {
         return courseScheduleService.getById(id);
     }
 

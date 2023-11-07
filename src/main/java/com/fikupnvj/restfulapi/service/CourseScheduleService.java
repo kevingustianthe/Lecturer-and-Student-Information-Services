@@ -40,10 +40,9 @@ public class CourseScheduleService {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Course schedule not found"));
     }
 
-    public ApiResponse<CourseScheduleResponse> getById(String id) {
+    public ApiResponse<CourseSchedule> getById(String id) {
         CourseSchedule courseSchedule = findById(id);
-        CourseScheduleResponse courseScheduleResponse = toCourseScheduleResponse(courseSchedule);
-        return new ApiResponse<>(true, "Data successfully retrieved", courseScheduleResponse);
+        return new ApiResponse<>(true, "Data successfully retrieved", courseSchedule);
     }
 
     public ApiResponse<List<CourseScheduleResponse>> getByParam(
