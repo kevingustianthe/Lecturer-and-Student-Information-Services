@@ -226,7 +226,7 @@ public class StudentService {
         }
     }
 
-    public ApiResponse<List<Student>> importExcelStudentData(MultipartFile file) {
+    public ApiResponse<List<Student>> importData(MultipartFile file) {
         List<Student> students;
         try {
             students = parseStudentDataFromExcel(file.getInputStream());

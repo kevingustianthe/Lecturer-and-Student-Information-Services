@@ -68,8 +68,8 @@ public class StudentController {
     }
 
     @PostMapping("/import")
-    public ApiResponse<List<Student>> importExcelStudentData(@Parameter(hidden = true) Account admin, @RequestHeader("X-API-TOKEN") String token, @RequestParam("file") MultipartFile file) {
-        return studentService.importExcelStudentData(file);
+    public ApiResponse<List<Student>> importData(@Parameter(hidden = true) Account admin, @RequestHeader("X-API-TOKEN") String token, @RequestParam("file") MultipartFile file) {
+        return studentService.importData(file);
     }
 
     @PutMapping("/{id}")
