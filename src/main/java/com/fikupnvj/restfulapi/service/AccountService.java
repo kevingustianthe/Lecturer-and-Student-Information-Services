@@ -103,8 +103,8 @@ public class AccountService {
         return new ApiResponse<>(true, "Update successfully", toResponseAccount(acc));
     }
 
-    public ApiResponse<AccountResponse> deleteAccount(UpdateAccountRequest request) {
-        Account acc = accountRepository.findById(request.getEmail())
+    public ApiResponse<AccountResponse> delete(String id) {
+        Account acc = accountRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Account not found"));
 
         accountRepository.delete(acc);

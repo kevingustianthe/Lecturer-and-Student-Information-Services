@@ -57,8 +57,8 @@ public class AccountController {
         return accountService.update(id, request);
     }
 
-    @DeleteMapping("/delete")
-    public ApiResponse<AccountResponse> deleteAccount(@Parameter(hidden = true) Account admin, @RequestHeader("X-API-TOKEN") String token, @RequestBody UpdateAccountRequest request) {
-        return accountService.deleteAccount(request);
+    @DeleteMapping("/delete/{id}")
+    public ApiResponse<AccountResponse> delete(@Parameter(hidden = true) Account admin, @RequestHeader("X-API-TOKEN") String token, @PathVariable String id) {
+        return accountService.delete(id);
     }
 }
