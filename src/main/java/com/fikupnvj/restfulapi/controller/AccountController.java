@@ -52,9 +52,9 @@ public class AccountController {
 //        return accountService.updateMe(account, request);
 //    }
 
-    @PostMapping("/update")
-    public ApiResponse<AccountResponse> updateById(@Parameter(hidden = true) Account admin, @RequestHeader("X-API-TOKEN") String token, @RequestBody UpdateAccountRequest request) {
-        return accountService.updateById(request);
+    @PutMapping("/update/{id}")
+    public ApiResponse<AccountResponse> update(@Parameter(hidden = true) Account admin, @RequestHeader("X-API-TOKEN") String token, @PathVariable String id, @RequestBody UpdateAccountRequest request) {
+        return accountService.update(id, request);
     }
 
     @DeleteMapping("/delete")

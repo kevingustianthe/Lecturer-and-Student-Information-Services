@@ -80,8 +80,8 @@ public class AccountService {
         return new ApiResponse<>(true, "Update successfully", toResponseAccount(account));
     }
 
-    public ApiResponse<AccountResponse> updateById(UpdateAccountRequest request) {
-        Account acc = accountRepository.findById(request.getEmail())
+    public ApiResponse<AccountResponse> update(String id, UpdateAccountRequest request) {
+        Account acc = accountRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Account not found"));
 
         if (Objects.nonNull(request.getRole())) {
