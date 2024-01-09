@@ -156,7 +156,7 @@ public class LecturerService {
         return new ApiResponse<>(true, "Lecturer data has been successfully deleted", lecturer);
     }
 
-    public List<Lecturer> parseExcelImportLecturer(InputStream is) {
+    public List<Lecturer> parseLecturerDataFromExcel(InputStream is) {
         try {
             Workbook workbook = new XSSFWorkbook(is);
             Sheet sheet = workbook.getSheetAt(0);
@@ -234,7 +234,7 @@ public class LecturerService {
     public ApiResponse<List<Lecturer>> importExcelLecturerData(MultipartFile file) {
         List<Lecturer> lecturers;
         try {
-            lecturers = parseExcelImportLecturer(file.getInputStream());
+            lecturers = parseLecturerDataFromExcel(file.getInputStream());
             if (lecturers.isEmpty()) {
                 return new ApiResponse<>(true, "Lecturer data already exists or data is incomplete", lecturers);
             }
