@@ -28,12 +28,12 @@ public class LecturerActivityController {
     }
 
     @GetMapping("/search")
-    public ApiResponse<List<LecturerActivity>> getByParam(@Parameter(hidden = true) Account account, @RequestHeader("X-API-TOKEN") String token,
+    public ApiResponse<List<LecturerActivity>> search(@Parameter(hidden = true) Account account, @RequestHeader("X-API-TOKEN") String token,
             @RequestParam(name = "status", required = false, defaultValue = "") LecturerActivity.Status status,
             @RequestParam(name = "name", required = false, defaultValue = "") String name,
             @RequestParam(name = "sortBy", required = false, defaultValue = "createdAt") String sortBy,
             @RequestParam(name = "order", required = false, defaultValue = "desc") String order) {
-        return lecturerActivityService.getByParam(status, name, sortBy, order);
+        return lecturerActivityService.search(status, lecturerName, sortBy, order);
     }
 
     @PostMapping

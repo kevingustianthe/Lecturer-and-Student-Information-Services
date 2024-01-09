@@ -45,7 +45,7 @@ public class CourseScheduleService {
         return new ApiResponse<>(true, "Data successfully retrieved", courseSchedule);
     }
 
-    public ApiResponse<List<CourseScheduleResponse>> getByParam(
+    public ApiResponse<List<CourseScheduleResponse>> search(
             String courseName,
             int semester,
             String studyProgram,

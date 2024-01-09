@@ -45,7 +45,7 @@ public class AccountService {
         return new ApiResponse<>(true, "Account successfully found", accountResponse);
     }
 
-    public ApiResponse<List<AccountResponse>> getByParam(String email, String role, Boolean status, String sortBy, String order) {
+    public ApiResponse<List<AccountResponse>> search(String email, String role, Boolean status, String sortBy, String order) {
         Sort sort = Sort.by(Sort.Order.by(sortBy).with(Sort.Direction.fromString(order)));
         List<Account> accounts = accountRepository.findAll(sort);
 

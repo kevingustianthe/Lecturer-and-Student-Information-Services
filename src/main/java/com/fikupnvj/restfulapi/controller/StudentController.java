@@ -46,7 +46,7 @@ public class StudentController {
     }
 
     @GetMapping("/search")
-    public ApiResponse<List<Student>> getByParam(@Parameter(hidden = true) Account account, @RequestHeader("X-API-TOKEN") String token,
+    public ApiResponse<List<Student>> search(@Parameter(hidden = true) Account account, @RequestHeader("X-API-TOKEN") String token,
             @RequestParam(name = "name", required = false, defaultValue = "") String name,
             @RequestParam(name = "nim", required = false, defaultValue = "") String nim,
             @RequestParam(name = "classOf", required = false, defaultValue = "") String classOf,
@@ -54,7 +54,7 @@ public class StudentController {
             @RequestParam(name = "interest", required = false, defaultValue = "") String interest,
             @RequestParam(name = "sortBy", required = false, defaultValue = "nim") String sortBy,
             @RequestParam(name = "order", required = false, defaultValue = "desc") String order) {
-        return studentService.getByParam(name, nim, classOf, studyProgram, interest, sortBy, order);
+        return studentService.search(name, nim, classOf, studyProgram, interest, sortBy, order);
     }
 
     @GetMapping("/{id}/course-schedule")

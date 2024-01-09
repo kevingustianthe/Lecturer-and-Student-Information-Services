@@ -38,13 +38,13 @@ public class AccountController {
     }
 
     @GetMapping("/search")
-    public ApiResponse<List<AccountResponse>> getByParam(@Parameter(hidden = true) Account admin, @RequestHeader("X-API-TOKEN") String token,
+    public ApiResponse<List<AccountResponse>> search(@Parameter(hidden = true) Account admin, @RequestHeader("X-API-TOKEN") String token,
             @RequestParam(name = "email", required = false, defaultValue = "") String email,
             @RequestParam(name = "role", required = false, defaultValue = "") String role,
             @RequestParam(name = "status", required = false, defaultValue = "") Boolean status,
             @RequestParam(name = "sortBy", required = false, defaultValue = "email") String sortBy,
             @RequestParam(name = "order", required = false, defaultValue = "asc") String order) {
-        return accountService.getByParam(email, role, status, sortBy, order);
+        return accountService.search(email, role, status, sortBy, order);
     }
 
 //    @PostMapping("/update/me")

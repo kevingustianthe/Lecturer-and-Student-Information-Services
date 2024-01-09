@@ -35,7 +35,7 @@ public class LecturerActivityService {
         return new ApiResponse<>(true, "Data successfully retrieved", lecturerActivity);
     }
 
-    public ApiResponse<List<LecturerActivity>> getByParam(LecturerActivity.Status status, String name, String sortBy, String order) {
+    public ApiResponse<List<LecturerActivity>> search(LecturerActivity.Status status, String name, String sortBy, String order) {
         Sort sort = Sort.by(Sort.Order.by(sortBy).with(Sort.Direction.fromString(order)));
         List<LecturerActivity> lecturerActivities = lecturerActivityRepository.findAll(sort);
         if (status != null) {

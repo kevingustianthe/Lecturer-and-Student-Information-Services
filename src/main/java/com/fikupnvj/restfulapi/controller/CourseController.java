@@ -28,13 +28,13 @@ public class CourseController {
     }
 
     @GetMapping("/search")
-    public ApiResponse<List<Course>> getByParam(@Parameter(hidden = true) Account account, @RequestHeader("X-API-TOKEN") String token,
+    public ApiResponse<List<Course>> search(@Parameter(hidden = true) Account account, @RequestHeader("X-API-TOKEN") String token,
             @RequestParam(name = "name", required = false, defaultValue = "") String name,
             @RequestParam(name = "semester", required = false, defaultValue = "0") int semester,
             @RequestParam(name = "studyProgram", required = false, defaultValue = "") String studyProgram,
             @RequestParam(name = "sortBy", required = false, defaultValue = "name") String sortBy,
             @RequestParam(name = "order", required = false, defaultValue = "desc") String order) {
-        return courseService.getByParam(name, semester, studyProgram, sortBy, order);
+        return courseService.search(name, semester, studyProgram, sortBy, order);
     }
 
     @PostMapping

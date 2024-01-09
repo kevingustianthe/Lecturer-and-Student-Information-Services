@@ -30,7 +30,7 @@ public class CourseScheduleController {
     }
 
     @GetMapping("/search")
-    public ApiResponse<List<CourseScheduleResponse>> getByParam(@Parameter(hidden = true) Account account, @RequestHeader("X-API-TOKEN") String token,
+    public ApiResponse<List<CourseScheduleResponse>> search(@Parameter(hidden = true) Account account, @RequestHeader("X-API-TOKEN") String token,
             @RequestParam(name = "courseName", required = false, defaultValue = "") String courseName,
             @RequestParam(name = "semester", required = false, defaultValue = "0") int semester,
             @RequestParam(name = "studyProgram", required = false, defaultValue = "") String studyProgram,
@@ -39,7 +39,7 @@ public class CourseScheduleController {
             @RequestParam(name = "lecturerName", required = false, defaultValue = "") String lecturerName,
             @RequestParam(name = "sortBy", required = false, defaultValue = "day") String sortBy,
             @RequestParam(name = "order", required = false, defaultValue = "asc") String order) {
-        return courseScheduleService.getByParam(courseName, semester, studyProgram, academicPeriod, room, lecturerName, sortBy, order);
+        return courseScheduleService.search(courseName, semester, studyProgram, academicPeriod, room, lecturerName, sortBy, order);
     }
 
     @PostMapping

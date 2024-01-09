@@ -32,7 +32,7 @@ public class CourseService {
         return new ApiResponse<>(true, "Data successfully retrieved", course);
     }
 
-    public ApiResponse<List<Course>> getByParam(String name, int semester, String studyProgram, String sortBy, String order) {
+    public ApiResponse<List<Course>> search(String name, int semester, String studyProgram, String sortBy, String order) {
         Sort sort = Sort.by(Sort.Order.by(sortBy).with(Sort.Direction.fromString(order)));
         List<Course> courses = courseRepository.findAll(sort);
 

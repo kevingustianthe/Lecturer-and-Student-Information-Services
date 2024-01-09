@@ -82,7 +82,7 @@ public class StudentService {
         return new ApiResponse<>(true, "Data successfully retrieved", studentResponse);
     }
 
-    public ApiResponse<List<Student>> getByParam(String name, String nim, String classOf, String studyProgram, String interest, String sortBy, String order) {
+    public ApiResponse<List<Student>> search(String name, String nim, String classOf, String studyProgram, String interest, String sortBy, String order) {
         Sort sort = Sort.by(Sort.Order.by(sortBy).with(Sort.Direction.fromString(order)));
         List<Student> students = studentRepository.findAll(sort);
 
