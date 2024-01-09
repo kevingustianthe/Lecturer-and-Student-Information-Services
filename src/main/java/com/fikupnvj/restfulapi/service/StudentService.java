@@ -151,7 +151,7 @@ public class StudentService {
         return new ApiResponse<>(true, "Student data has been successfully deleted", student);
     }
 
-    public List<Student> parseExcelImportStudent(InputStream is) {
+    public List<Student> parseStudentDataFromExcel(InputStream is) {
         try {
             Workbook workbook = new XSSFWorkbook(is);
             Sheet sheet = workbook.getSheetAt(0);
