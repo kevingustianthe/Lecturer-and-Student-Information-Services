@@ -53,8 +53,8 @@ public class CourseScheduleController {
     }
 
     @PutMapping("/{id}/student/import")
-    public ApiResponse<CourseSchedule> updateCourseScheduleStudents(@Parameter(hidden = true) Account admin, @RequestHeader("X-API-TOKEN") String token, @PathVariable String id, @RequestParam("file") MultipartFile file) {
-        return courseScheduleService.updateCourseScheduleStudents(id, file);
+    public ApiResponse<CourseSchedule> importStudentData(@Parameter(hidden = true) Account admin, @RequestHeader("X-API-TOKEN") String token, @PathVariable String id, @RequestParam("file") MultipartFile file) {
+        return courseScheduleService.importStudentData(id, file);
     }
 
     @DeleteMapping("/{id}")

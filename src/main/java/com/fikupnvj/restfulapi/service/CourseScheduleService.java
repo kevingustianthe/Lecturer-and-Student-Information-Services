@@ -102,7 +102,7 @@ public class CourseScheduleService {
         return new ApiResponse<>(true, "Course schedule data has been successfully updated", courseScheduleRepository.save(courseSchedule));
     }
 
-    public ApiResponse<CourseSchedule> updateCourseScheduleStudents(String id, MultipartFile file) {
+    public ApiResponse<CourseSchedule> importStudentData(String id, MultipartFile file) {
         CourseSchedule courseSchedule = findById(id);
         List<Student> students = getListStudentsFromExcel(file);
 
