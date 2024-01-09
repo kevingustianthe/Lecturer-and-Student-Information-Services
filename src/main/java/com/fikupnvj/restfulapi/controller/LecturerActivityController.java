@@ -30,7 +30,7 @@ public class LecturerActivityController {
     @GetMapping("/search")
     public ApiResponse<List<LecturerActivity>> search(@Parameter(hidden = true) Account account, @RequestHeader("X-API-TOKEN") String token,
             @RequestParam(name = "status", required = false, defaultValue = "") LecturerActivity.Status status,
-            @RequestParam(name = "name", required = false, defaultValue = "") String name,
+            @RequestParam(name = "lecturerName", required = false, defaultValue = "") String lecturerName,
             @RequestParam(name = "sortBy", required = false, defaultValue = "createdAt") String sortBy,
             @RequestParam(name = "order", required = false, defaultValue = "desc") String order) {
         return lecturerActivityService.search(status, lecturerName, sortBy, order);
