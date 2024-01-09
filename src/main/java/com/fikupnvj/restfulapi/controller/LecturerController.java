@@ -72,8 +72,8 @@ public class LecturerController {
     }
 
     @PostMapping("/import")
-    public ApiResponse<List<Lecturer>> importExcelLecturerData(@Parameter(hidden = true) Account admin, @RequestHeader("X-API-TOKEN") String token, @RequestParam("file") MultipartFile file) {
-        return lecturerService.importExcelLecturerData(file);
+    public ApiResponse<List<Lecturer>> importData(@Parameter(hidden = true) Account admin, @RequestHeader("X-API-TOKEN") String token, @RequestParam("file") MultipartFile file) {
+        return lecturerService.importData(file);
     }
 
     @PutMapping("/{id}")
