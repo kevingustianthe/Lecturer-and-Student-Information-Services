@@ -226,10 +226,10 @@ public class StudentService {
         }
     }
 
-    public ApiResponse<List<Student>> importExcelStudentData(MultipartFile file) {
+    public ApiResponse<List<Student>> importData(MultipartFile file) {
         List<Student> students;
         try {
-            students = parseExcelImportStudent(file.getInputStream());
+            students = parseStudentDataFromExcel(file.getInputStream());
             if (students.isEmpty()) {
                 return new ApiResponse<>(true, "Student data already exists or data is incomplete", students);
             }
