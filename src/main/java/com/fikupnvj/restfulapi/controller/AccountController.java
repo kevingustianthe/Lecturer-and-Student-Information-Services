@@ -27,10 +27,10 @@ public class AccountController {
         }
     }
 
-    @GetMapping("/me")
-    public ApiResponse<AccountResponse> getMe(@Parameter(hidden = true) Account account, @RequestHeader("X-API-TOKEN") String token) {
-        return accountService.getMe(account);
-    }
+//    @GetMapping("/me")
+//    public ApiResponse<AccountResponse> getMe(@Parameter(hidden = true) Account account, @RequestHeader("X-API-TOKEN") String token) {
+//        return accountService.getMe(account);
+//    }
 
     @PostMapping("/find")
     public ApiResponse<AccountResponse> getById(@Parameter(hidden = true) Account admin, @RequestHeader("X-API-TOKEN") String token, @RequestBody AccountResponse accountResponse) {
@@ -47,10 +47,10 @@ public class AccountController {
         return accountService.getByParam(email, role, status, sortBy, order);
     }
 
-    @PostMapping("/update/me")
-    public ApiResponse<AccountResponse> updateMe(@Parameter(hidden = true) Account account, @RequestHeader("X-API-TOKEN") String token, @RequestBody UpdateAccountRequest request) {
-        return accountService.updateMe(account, request);
-    }
+//    @PostMapping("/update/me")
+//    public ApiResponse<AccountResponse> updateMe(@Parameter(hidden = true) Account account, @RequestHeader("X-API-TOKEN") String token, @RequestBody UpdateAccountRequest request) {
+//        return accountService.updateMe(account, request);
+//    }
 
     @PostMapping("/update")
     public ApiResponse<AccountResponse> updateById(@Parameter(hidden = true) Account admin, @RequestHeader("X-API-TOKEN") String token, @RequestBody UpdateAccountRequest request) {
