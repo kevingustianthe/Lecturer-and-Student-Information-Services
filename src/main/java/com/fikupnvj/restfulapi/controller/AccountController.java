@@ -32,9 +32,9 @@ public class AccountController {
 //        return accountService.getMe(account);
 //    }
 
-    @PostMapping("/find")
-    public ApiResponse<AccountResponse> getById(@Parameter(hidden = true) Account admin, @RequestHeader("X-API-TOKEN") String token, @RequestBody AccountResponse accountResponse) {
-        return accountService.getById(accountResponse.getEmail());
+    @GetMapping("/{id}")
+    public ApiResponse<AccountResponse> getById(@Parameter(hidden = true) Account admin, @RequestHeader("X-API-TOKEN") String token, @PathVariable String id) {
+        return accountService.getById(id);
     }
 
     @GetMapping("/search")
