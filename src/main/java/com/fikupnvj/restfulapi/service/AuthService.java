@@ -5,6 +5,7 @@ import com.fikupnvj.restfulapi.model.LoginRequest;
 import com.fikupnvj.restfulapi.model.ApiResponse;
 import com.fikupnvj.restfulapi.model.TokenResponse;
 import com.fikupnvj.restfulapi.repository.AccountRepository;
+import com.fikupnvj.restfulapi.repository.LecturerRepository;
 import com.fikupnvj.restfulapi.tool.BCrypt;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -23,6 +24,9 @@ public class AuthService {
     @Autowired
     private EmailService emailService;
 
+    @Autowired
+    private LecturerRepository lecturerRepository;
+
     public ApiResponse<Account> register(Account request) {
         try {
             if (accountRepository.existsById(request.getEmail())) {
@@ -33,10 +37,13 @@ public class AuthService {
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid email address");
             }
 
-            request.setPassword(BCrypt.hashpw(request.getPassword(), BCrypt.gensalt()));
-            if (request.getRole() == null) {
-                request.setRole("USER");
+            if (lecturerRepository.findByEmail(request.getEmail()).isPresent()) {
+                request.setRole("LECTURER");
+            } else {
+                request.setRole("STUDENT");
             }
+
+            request.setPassword(BCrypt.hashpw(request.getPassword(), BCrypt.gensalt()));
             request.setStatus(false);
             request.setVerificationCode(UUID.randomUUID().toString());
 
