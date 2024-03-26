@@ -9,6 +9,7 @@ import com.fikupnvj.restfulapi.repository.LecturerRepository;
 import com.fikupnvj.restfulapi.tool.BCrypt;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -16,6 +17,7 @@ import java.util.Objects;
 import java.util.UUID;
 
 @Service
+@EnableAsync
 public class AuthService {
 
     @Autowired
