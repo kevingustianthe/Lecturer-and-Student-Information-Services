@@ -3,6 +3,7 @@ package com.fikupnvj.restfulapi.service;
 import com.fikupnvj.restfulapi.entity.Account;
 import jakarta.mail.internet.MimeMessage;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
@@ -18,6 +19,9 @@ public class EmailService {
 
     @Autowired
     private JavaMailSender javaMailSender;
+
+    @Value("${SERVER}")
+    private String server;
 
     @Async
     public void sendVerificationEmail(Account account) {
@@ -39,7 +43,7 @@ public class EmailService {
                             "    </div>\n" +
                             "</body>";
 
-            String baseURL = "http://localhost:8090/api/auth/verify";
+            String baseURL = server + "/api/auth/verify";
             String verifyURL = baseURL + "?email=" + account.getEmail() + "&code=" + account.getVerificationCode();
 
             content = content.replace("[[name]]", account.getEmail().split("@")[0]);
