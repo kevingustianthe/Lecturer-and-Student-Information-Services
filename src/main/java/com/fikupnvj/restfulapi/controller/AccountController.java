@@ -20,11 +20,7 @@ public class AccountController {
 
     @GetMapping
     public ApiResponse<List<AccountResponse>> getAll(@Parameter(hidden = true) Account admin, @RequestHeader("X-API-TOKEN") String token) {
-        try {
-            return accountService.getAll();
-        } catch (Exception e) {
-            return new ApiResponse<>(false, e.getMessage(), null);
-        }
+        return accountService.getAll();
     }
 
 //    @GetMapping("/me")
