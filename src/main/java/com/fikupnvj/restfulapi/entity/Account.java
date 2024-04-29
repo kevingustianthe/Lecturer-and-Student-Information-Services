@@ -38,7 +38,7 @@ public class Account {
 
     @PreRemove
     private void preRemove() {
-        student.setAccount(null);
-        lecturer.setAccount(null);
+        if (student.getAccount() != null) student.setAccount(null);
+        if (lecturer.getAccount() != null) lecturer.setAccount(null);
     }
 }
