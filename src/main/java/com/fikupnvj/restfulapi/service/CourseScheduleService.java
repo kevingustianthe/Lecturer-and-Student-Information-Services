@@ -11,6 +11,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
@@ -29,10 +30,12 @@ public class CourseScheduleService {
     @Autowired
     private StudentRepository studentRepository;
 
-    public ApiResponse<List<CourseScheduleResponse>> getAll() {
+    public ResponseEntity<Object> getAll() {
         List<CourseSchedule> courseSchedules = courseScheduleRepository.findAll();
         List<CourseScheduleResponse> courseScheduleResponses = toListCourseScheduleResponse(courseSchedules);
-        return new ApiResponse<>(true, "Data successfully retrieved", courseScheduleResponses);
+
+        ApiResponse<List<CourseScheduleResponse>> response = new ApiResponse<>(true, "Data successfully retrieved", courseScheduleResponses);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     public CourseSchedule findById(String id) {
@@ -40,12 +43,14 @@ public class CourseScheduleService {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Course schedule not found"));
     }
 
-    public ApiResponse<CourseSchedule> getById(String id) {
+    public ResponseEntity<Object> getById(String id) {
         CourseSchedule courseSchedule = findById(id);
-        return new ApiResponse<>(true, "Data successfully retrieved", courseSchedule);
+
+        ApiResponse<CourseSchedule> response = new ApiResponse<>(true, "Data successfully retrieved", courseSchedule);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    public ApiResponse<List<CourseScheduleResponse>> search(
+    public ResponseEntity<Object> search(
             String courseName,
             int semester,
             String studyProgram,
@@ -83,26 +88,31 @@ public class CourseScheduleService {
 
         List<CourseScheduleResponse> courseScheduleResponses = toListCourseScheduleResponse(courseSchedules);
 
-        return new ApiResponse<>(true, "Data successfully retrieved", courseScheduleResponses);
+        ApiResponse<List<CourseScheduleResponse>> response = new ApiResponse<>(true, "Data successfully retrieved", courseScheduleResponses);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    public ApiResponse<CourseSchedule> create(CourseSchedule courseSchedule) {
+    public ResponseEntity<Object> create(CourseSchedule courseSchedule) {
         if (isDuplicate(courseSchedule)) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Course schedule data already exists");
         }
-        return new ApiResponse<>(true, "Course schedule data has been successfully added", courseScheduleRepository.save(courseSchedule));
+
+        ApiResponse<CourseSchedule> response = new ApiResponse<>(true, "Course schedule data has been successfully added", courseScheduleRepository.save(courseSchedule));
+        return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
-    public ApiResponse<CourseSchedule> update(String id, CourseSchedule courseSchedule) {
+    public ResponseEntity<Object> update(String id, CourseSchedule courseSchedule) {
         findById(id);
         courseSchedule.setId(id);
         if (!canUpdate(id, courseSchedule)) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Course schedule data already exists");
         }
-        return new ApiResponse<>(true, "Course schedule data has been successfully updated", courseScheduleRepository.save(courseSchedule));
+
+        ApiResponse<CourseSchedule> response = new ApiResponse<>(true, "Course schedule data has been successfully updated", courseScheduleRepository.save(courseSchedule));
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    public ApiResponse<CourseSchedule> importStudentData(String id, MultipartFile file) {
+    public ResponseEntity<Object> importStudentData(String id, MultipartFile file) {
         CourseSchedule courseSchedule = findById(id);
         List<Student> students = getListStudentsFromExcel(file);
 
@@ -113,13 +123,16 @@ public class CourseScheduleService {
         });
         courseScheduleRepository.save(courseSchedule);
 
-        return new ApiResponse<>(true, "Course schedule students data has been successfully updated", courseSchedule);
+        ApiResponse<CourseSchedule> response = new ApiResponse<>(true, "Course schedule students data has been successfully updated", courseSchedule);
+        return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
-    public ApiResponse<CourseSchedule> delete(String id) {
+    public ResponseEntity<Object> delete(String id) {
         CourseSchedule courseSchedule = findById(id);
         courseScheduleRepository.delete(courseSchedule);
-        return new ApiResponse<>(true, "Course schedule data has been successfully deleted", courseSchedule);
+
+        ApiResponse<CourseSchedule> response = new ApiResponse<>(true, "Course schedule data has been successfully deleted", courseSchedule);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     public List<Student> getListStudentsFromExcel(MultipartFile file) {

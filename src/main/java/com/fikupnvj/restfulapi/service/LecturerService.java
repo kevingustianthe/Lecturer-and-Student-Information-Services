@@ -13,6 +13,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
@@ -38,8 +39,9 @@ public class LecturerService {
     @Autowired
     private EmailService emailService;
 
-    public ApiResponse<List<Lecturer>> getAll() {
-        return new ApiResponse<>(true, "Data successfully retrieved", lecturerRepository.findAll());
+    public ResponseEntity<Object> getAll() {
+        ApiResponse<List<Lecturer>> response = new ApiResponse<>(true, "Data successfully retrieved", lecturerRepository.findAll());
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     public Lecturer findById(String id) {
@@ -52,7 +54,7 @@ public class LecturerService {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Lecturer data not found"));
     }
 
-    public ApiResponse<LecturerResponse> getMe(Account account) {
+    public ResponseEntity<Object> getMe(Account account) {
         Lecturer lecturer = findByEmail(account.getEmail());
 
         if (lecturer.getAccount() == null) {
@@ -63,33 +65,38 @@ public class LecturerService {
         lecturerActivityService.updateAllStatus(lecturer.getLecturerActivities());
         LecturerResponse lecturerResponse = toLecturerResponse(lecturer);
 
-        return new ApiResponse<>(true, "Data successfully retrieved", lecturerResponse);
+        ApiResponse<LecturerResponse> response = new ApiResponse<>(true, "Data successfully retrieved", lecturerResponse);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    public ApiResponse<List<LecturerActivityResponse>> getMeLecturerActivity(Account account) {
+    public ResponseEntity<Object> getMeLecturerActivity(Account account) {
         Lecturer lecturer = findByEmail(account.getEmail());
 
         lecturerActivityService.updateAllStatus(lecturer.getLecturerActivities());
         List<LecturerActivityResponse> lecturerActivityResponses = toListLecturerActivityResponse(lecturer.getLecturerActivities());
 
-        return new ApiResponse<>(true, "Data successfully retrieved", lecturerActivityResponses);
+        ApiResponse<List<LecturerActivityResponse>> response = new ApiResponse<>(true, "Data successfully retrieved", lecturerActivityResponses);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    public ApiResponse<List<CourseScheduleResponse>> getMeLecturerCourseSchedule(Account account) {
+    public ResponseEntity<Object> getMeLecturerCourseSchedule(Account account) {
         Lecturer lecturer = findByEmail(account.getEmail());
 
         List<CourseScheduleResponse> courseScheduleResponses = courseScheduleService.toListCourseScheduleResponse(lecturer.getCourseSchedules());
 
-        return new ApiResponse<>(true, "Data successfully retrieved", courseScheduleResponses);
+        ApiResponse<List<CourseScheduleResponse>> response = new ApiResponse<>(true, "Data successfully retrieved", courseScheduleResponses);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    public ApiResponse<LecturerResponse> getById(String id) {
+    public ResponseEntity<Object> getById(String id) {
         Lecturer lecturer = findById(id);
         lecturerActivityService.updateAllStatus(lecturer.getLecturerActivities());
-        return new ApiResponse<>(true, "Data", toLecturerResponse(lecturer));
+
+        ApiResponse<LecturerResponse> response = new ApiResponse<>(true, "Data", toLecturerResponse(lecturer));
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    public ApiResponse<List<Lecturer>> getByParam(String name, String studyProgram, String expertise, String sortBy, String order) {
+    public ResponseEntity<Object> getByParam(String name, String studyProgram, String expertise, String sortBy, String order) {
         Sort sort = Sort.by(Sort.Order.by(sortBy).with(Sort.Direction.fromString(order)));
         List<Lecturer> lecturers = lecturerRepository.findAll(sort);
 
@@ -113,47 +120,56 @@ public class LecturerService {
             ).toList();
         }
 
-        return new ApiResponse<>(true, "Data successfully retrieved", lecturers);
+        ApiResponse<List<Lecturer>> response = new ApiResponse<>(true, "Data successfully retrieved", lecturers);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    public ApiResponse<List<LecturerActivityResponse>> getLecturerActivity(String id) {
+    public ResponseEntity<Object> getLecturerActivity(String id) {
         Lecturer lecturer = findById(id);
         lecturerActivityService.updateAllStatus(lecturer.getLecturerActivities());
         List<LecturerActivityResponse> lecturerActivities = toListLecturerActivityResponse(lecturer.getLecturerActivities());
 
-        return new ApiResponse<>(true, "Data", lecturerActivities);
+        ApiResponse<List<LecturerActivityResponse>> response = new ApiResponse<>(true, "Data", lecturerActivities);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    public ApiResponse<List<CourseScheduleResponse>> getLecturerCourseSchedule(String id) {
+    public ResponseEntity<Object> getLecturerCourseSchedule(String id) {
         Lecturer lecturer = findById(id);
         List<CourseScheduleResponse> lecturerCourseSchedules = courseScheduleService.toListCourseScheduleResponse(lecturer.getCourseSchedules());
 
-        return new ApiResponse<>(true, "Data", lecturerCourseSchedules);
+        ApiResponse<List<CourseScheduleResponse>> response = new ApiResponse<>(true, "Data", lecturerCourseSchedules);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    public ApiResponse<Lecturer> create(Lecturer lecturer) {
+    public ResponseEntity<Object> create(Lecturer lecturer) {
         if (!isDuplicate(lecturer)) {
             lecturerRepository.save(lecturer);
         } else {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Lecturer data already exists");
         }
-        return new ApiResponse<>(true, "Lecturer data has been successfully added", lecturer);
+
+        ApiResponse<Lecturer> response = new ApiResponse<>(true, "Lecturer data has been successfully added", lecturer);
+        return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
-    public ApiResponse<Lecturer> update(String id, Lecturer lecturer) {
+    public ResponseEntity<Object> update(String id, Lecturer lecturer) {
         findById(id);
         if (canUpdate(id, lecturer)) {
             lecturer.setId(id);
         } else {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Lecturer data already exists");
         }
-        return new ApiResponse<>(true, "Lecturer data has been successfully updated", lecturerRepository.save(lecturer));
+
+        ApiResponse<Lecturer> response = new ApiResponse<>(true, "Lecturer data has been successfully updated", lecturerRepository.save(lecturer));
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    public ApiResponse<Lecturer> delete(String id) {
+    public ResponseEntity<Object> delete(String id) {
         Lecturer lecturer = findById(id);
         lecturerRepository.delete(lecturer);
-        return new ApiResponse<>(true, "Lecturer data has been successfully deleted", lecturer);
+
+        ApiResponse<Lecturer> response = new ApiResponse<>(true, "Lecturer data has been successfully deleted", lecturer);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     public List<Lecturer> parseLecturerDataFromExcel(InputStream is) {
@@ -231,12 +247,13 @@ public class LecturerService {
         }
     }
 
-    public ApiResponse<List<Lecturer>> importData(MultipartFile file) {
+    public ResponseEntity<Object> importData(MultipartFile file) {
         List<Lecturer> lecturers;
         try {
             lecturers = parseLecturerDataFromExcel(file.getInputStream());
             if (lecturers.isEmpty()) {
-                return new ApiResponse<>(true, "Lecturer data already exists or data is incomplete", lecturers);
+                ApiResponse<List<Lecturer>> response = new ApiResponse<>(true, "Lecturer data already exists or data is incomplete", lecturers);
+                return new ResponseEntity<>(response, HttpStatus.OK);
             }
 
             lecturers.forEach(lecturer -> {
@@ -247,7 +264,8 @@ public class LecturerService {
                 }
             });
 
-            return new ApiResponse<>(true, "Lecturer data has been successfully added", lecturers);
+            ApiResponse<List<Lecturer>> response = new ApiResponse<>(true, "Lecturer data has been successfully added", lecturers);
+            return new ResponseEntity<>(response, HttpStatus.CREATED);
         } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, e.getMessage());
         }

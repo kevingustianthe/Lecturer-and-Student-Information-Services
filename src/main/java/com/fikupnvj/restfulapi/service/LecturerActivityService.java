@@ -6,6 +6,7 @@ import com.fikupnvj.restfulapi.repository.LecturerActivityRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -18,10 +19,12 @@ public class LecturerActivityService {
     @Autowired
     private LecturerActivityRepository lecturerActivityRepository;
 
-    public ApiResponse<List<LecturerActivity>> getAll() {
+    public ResponseEntity<Object> getAll() {
         List<LecturerActivity> activities = lecturerActivityRepository.findAll();
         updateAllStatus(activities);
-        return new ApiResponse<>(true, "Data successfully retrieved", activities);
+
+        ApiResponse<List<LecturerActivity>> response = new ApiResponse<>(true, "Data successfully retrieved", activities);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     public LecturerActivity findById(String id) {
@@ -29,13 +32,15 @@ public class LecturerActivityService {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Lecturer activity not found"));
     }
 
-    public ApiResponse<LecturerActivity> getById(String id) {
+    public ResponseEntity<Object> getById(String id) {
         LecturerActivity lecturerActivity = findById(id);
         updateStatus(lecturerActivity);
-        return new ApiResponse<>(true, "Data successfully retrieved", lecturerActivity);
+
+        ApiResponse<LecturerActivity> response = new ApiResponse<>(true, "Data successfully retrieved", lecturerActivity);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    public ApiResponse<List<LecturerActivity>> search(LecturerActivity.Status status, String name, String sortBy, String order) {
+    public ResponseEntity<Object> search(LecturerActivity.Status status, String name, String sortBy, String order) {
         Sort sort = Sort.by(Sort.Order.by(sortBy).with(Sort.Direction.fromString(order)));
         List<LecturerActivity> lecturerActivities = lecturerActivityRepository.findAll(sort);
         if (status != null) {
@@ -50,20 +55,22 @@ public class LecturerActivityService {
             ).toList();
         }
 
-        return new ApiResponse<>(true, "Data successfully retrieved", lecturerActivities);
+        ApiResponse<List<LecturerActivity>> response = new ApiResponse<>(true, "Data successfully retrieved", lecturerActivities);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    public ApiResponse<LecturerActivity> create(LecturerActivity lecturerActivity) {
+    public ResponseEntity<Object> create(LecturerActivity lecturerActivity) {
         validateDate(lecturerActivity);
         lecturerActivity.updateStatus();
         if (isDuplicate(lecturerActivity)) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Lecturer activity data already exists");
         }
 
-        return new ApiResponse<>(true, "Lecturer activity data has been successfully added", lecturerActivityRepository.save(lecturerActivity));
+        ApiResponse<LecturerActivity> response = new ApiResponse<>(true, "Lecturer activity data has been successfully added", lecturerActivityRepository.save(lecturerActivity));
+        return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
-    public ApiResponse<LecturerActivity> update(String id, LecturerActivity lecturerActivity) {
+    public ResponseEntity<Object> update(String id, LecturerActivity lecturerActivity) {
         findById(id);
         lecturerActivity.setId(id);
         validateDate(lecturerActivity);
@@ -72,13 +79,16 @@ public class LecturerActivityService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Lecturer activity data already exists");
         }
 
-        return new ApiResponse<>(true, "Lecturer activity data has been successfully updated", lecturerActivityRepository.save(lecturerActivity));
+        ApiResponse<LecturerActivity> response = new ApiResponse<>(true, "Lecturer activity data has been successfully updated", lecturerActivityRepository.save(lecturerActivity));
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    public ApiResponse<LecturerActivity> delete(String id) {
+    public ResponseEntity<Object> delete(String id) {
         LecturerActivity lecturerActivity = findById(id);
         lecturerActivityRepository.delete(lecturerActivity);
-        return new ApiResponse<>(true, "Lecturer activity data has been successfully deleted", lecturerActivity);
+
+        ApiResponse<LecturerActivity> response = new ApiResponse<>(true, "Lecturer activity data has been successfully deleted", lecturerActivity);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     public void validateDate(LecturerActivity lecturerActivity) {

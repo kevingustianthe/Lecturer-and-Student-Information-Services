@@ -9,6 +9,7 @@ import com.fikupnvj.restfulapi.tool.BCrypt;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -23,29 +24,32 @@ public class AccountService {
     @Autowired
     private AccountRepository accountRepository;
 
-    public ApiResponse<List<AccountResponse>> getAll() {
+    public ResponseEntity<Object> getAll() {
         List<Account> accountList = accountRepository.findAll();
         List<AccountResponse> accountResponses = toListAccountResponse(accountList);
 
-        return new ApiResponse<>(true, "Account successfully retrieved", accountResponses);
+        ApiResponse<List<AccountResponse>> response = new ApiResponse<>(true, "Account successfully retrieved", accountResponses);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    public ApiResponse<AccountResponse> getMe(Account account) {
+    public ResponseEntity<Object> getMe(Account account) {
         AccountResponse accountResponse = toResponseAccount(account);
 
-        return new ApiResponse<>(true, "Account successfully retrieved", accountResponse);
+        ApiResponse<AccountResponse> response = new ApiResponse<>(true, "Account successfully retrieved", accountResponse);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    public ApiResponse<AccountResponse> getById(String email) {
+    public ResponseEntity<Object> getById(String email) {
         Account acc = accountRepository.findById(email)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Account not found"));
 
         AccountResponse accountResponse = toResponseAccount(acc);
 
-        return new ApiResponse<>(true, "Account successfully found", accountResponse);
+        ApiResponse<AccountResponse> response = new ApiResponse<>(true, "Account successfully found", accountResponse);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    public ApiResponse<List<AccountResponse>> search(String email, String role, Boolean status, String sortBy, String order) {
+    public ResponseEntity<Object> search(String email, String role, Boolean status, String sortBy, String order) {
         Sort sort = Sort.by(Sort.Order.by(sortBy).with(Sort.Direction.fromString(order)));
         List<Account> accounts = accountRepository.findAll(sort);
 
@@ -67,20 +71,22 @@ public class AccountService {
             ).toList();
         }
 
-        return new ApiResponse<>(true, "Data successfully retrieved", toListAccountResponse(accounts));
+        ApiResponse<List<AccountResponse>> response = new ApiResponse<>(true, "Data successfully retrieved", toListAccountResponse(accounts));
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    public ApiResponse<AccountResponse> updateMe(Account account, UpdateAccountRequest request) {
+    public ResponseEntity<Object> updateMe(Account account, UpdateAccountRequest request) {
         if (Objects.nonNull(request.getPassword())) {
             account.setPassword(BCrypt.hashpw(request.getPassword(), BCrypt.gensalt()));
         }
 
         accountRepository.save(account);
 
-        return new ApiResponse<>(true, "Update successfully", toResponseAccount(account));
+        ApiResponse<AccountResponse> response = new ApiResponse<>(true, "Update successfully", toResponseAccount(account));
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    public ApiResponse<AccountResponse> update(String id, UpdateAccountRequest request) {
+    public ResponseEntity<Object> update(String id, UpdateAccountRequest request) {
         Account acc = accountRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Account not found"));
 
@@ -100,16 +106,18 @@ public class AccountService {
 
         accountRepository.save(acc);
 
-        return new ApiResponse<>(true, "Update successfully", toResponseAccount(acc));
+        ApiResponse<AccountResponse> response = new ApiResponse<>(true, "Update successfully", toResponseAccount(acc));
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    public ApiResponse<AccountResponse> delete(String id) {
+    public ResponseEntity<Object> delete(String id) {
         Account acc = accountRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Account not found"));
 
         accountRepository.delete(acc);
 
-        return new ApiResponse<>(true, "Account successfully deleted", toResponseAccount(acc));
+        ApiResponse<AccountResponse> response = new ApiResponse<>(true, "Account successfully deleted", toResponseAccount(acc));
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     private AccountResponse toResponseAccount(Account account) {

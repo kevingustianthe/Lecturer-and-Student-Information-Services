@@ -6,6 +6,7 @@ import com.fikupnvj.restfulapi.repository.CourseRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -18,8 +19,9 @@ public class CourseService {
     @Autowired
     private CourseRepository courseRepository;
 
-    public ApiResponse<List<Course>> getAll() {
-        return new ApiResponse<>(true, "Data successfully retrieved", courseRepository.findAll());
+    public ResponseEntity<Object> getAll() {
+        ApiResponse<List<Course>> response = new ApiResponse<>(true, "Data successfully retrieved", courseRepository.findAll());
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     public Course findById(String id) {
@@ -27,12 +29,13 @@ public class CourseService {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Course data not found"));
     }
 
-    public ApiResponse<Course> getById(String id) {
+    public ResponseEntity<Object> getById(String id) {
         Course course = findById(id);
-        return new ApiResponse<>(true, "Data successfully retrieved", course);
+        ApiResponse<Course> response = new ApiResponse<>(true, "Data successfully retrieved", course);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    public ApiResponse<List<Course>> search(String name, int semester, String studyProgram, String sortBy, String order) {
+    public ResponseEntity<Object> search(String name, int semester, String studyProgram, String sortBy, String order) {
         Sort sort = Sort.by(Sort.Order.by(sortBy).with(Sort.Direction.fromString(order)));
         List<Course> courses = courseRepository.findAll(sort);
 
@@ -48,29 +51,36 @@ public class CourseService {
             courses = courses.stream().filter(course -> Objects.equals(course.getStudyProgram(), studyProgram)).toList();
         }
 
-        return new ApiResponse<>(true, "Data successfully retrieved", courses);
+        ApiResponse<List<Course>> response = new ApiResponse<>(true, "Data successfully retrieved", courses);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    public ApiResponse<Course> create(Course course) {
+    public ResponseEntity<Object> create(Course course) {
         if (isDuplicate(course)) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Course data already exists");
         }
-        return new ApiResponse<>(true, "Course data has been successfully added", courseRepository.save(course));
+
+        ApiResponse<Course> response = new ApiResponse<>(true, "Course data has been successfully added", courseRepository.save(course));
+        return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
-    public ApiResponse<Course> update(String id, Course course) {
+    public ResponseEntity<Object> update(String id, Course course) {
         findById(id);
         course.setId(id);
         if (!canUpdate(id, course)) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Course data already exists");
         }
-        return new ApiResponse<>(true, "Course data has been successfully updated", courseRepository.save(course));
+
+        ApiResponse<Course> response = new ApiResponse<>(true, "Course data has been successfully updated", courseRepository.save(course));
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    public ApiResponse<Course> delete(String id) {
+    public ResponseEntity<Object> delete(String id) {
         Course course = findById(id);
         courseRepository.delete(course);
-        return new ApiResponse<>(true, "Course data has been successfully deleted", course);
+
+        ApiResponse<Course> response = new ApiResponse<>(true, "Course data has been successfully deleted", course);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     public boolean isDuplicate(Course course) {

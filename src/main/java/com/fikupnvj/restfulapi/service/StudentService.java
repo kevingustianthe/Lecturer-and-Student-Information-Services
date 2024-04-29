@@ -11,6 +11,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
@@ -34,8 +35,9 @@ public class StudentService {
     @Autowired
     private EmailService emailService;
 
-    public ApiResponse<List<Student>> getAll() {
-        return new ApiResponse<>(true, "Data successfully retrieved", studentRepository.findAll());
+    public ResponseEntity<Object> getAll() {
+        ApiResponse<List<Student>> response = new ApiResponse<>(true, "Data successfully retrieved", studentRepository.findAll());
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     public Student findStudentById(String id) {
@@ -43,7 +45,7 @@ public class StudentService {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Student data not found"));
     }
 
-    public ApiResponse<StudentResponse> getMe(Account account) {
+    public ResponseEntity<Object> getMe(Account account) {
         Student student = studentRepository.findByEmail(account.getEmail())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Student data not found"));
         StudentResponse studentResponse = toStudentResponse(student);
@@ -53,18 +55,20 @@ public class StudentService {
             studentRepository.save(student);
         }
 
-        return new ApiResponse<>(true, "Data successfully retrieved", studentResponse);
+        ApiResponse<StudentResponse> response = new ApiResponse<>(true, "Data successfully retrieved", studentResponse);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    public ApiResponse<List<CourseScheduleResponse>> getMeCourseSchedule(Account account) {
+    public ResponseEntity<Object> getMeCourseSchedule(Account account) {
         Student student = studentRepository.findByEmail(account.getEmail())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Student data not found"));
         List<CourseScheduleResponse> courseSchedules = courseScheduleService.toListCourseScheduleResponse(student.getCourseSchedules());
 
-        return new ApiResponse<>(true, "Data successfully retrieved", courseSchedules);
+        ApiResponse<List<CourseScheduleResponse>> response = new ApiResponse<>(true, "Data successfully retrieved", courseSchedules);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    public ApiResponse<List<CourseScheduleResponse>> getMeCourseScheduleToday(Account account) {
+    public ResponseEntity<Object> getMeCourseScheduleToday(Account account) {
         Student student = studentRepository.findByEmail(account.getEmail())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Student data not found"));
 
@@ -72,17 +76,19 @@ public class StudentService {
                 .toListCourseScheduleResponse(student.getCourseSchedules())
                 .stream().filter(schedule -> schedule.getDay() == LocalDate.now().getDayOfWeek()).toList();
 
-        return new ApiResponse<>(true, "Course Schedule Today", courseSchedulesToday);
+        ApiResponse<List<CourseScheduleResponse>> response = new ApiResponse<>(true, "Course Schedule Today", courseSchedulesToday);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    public ApiResponse<StudentResponse> getById(String id) {
+    public ResponseEntity<Object> getById(String id) {
         Student student = findStudentById(id);
         StudentResponse studentResponse = toStudentResponse(student);
 
-        return new ApiResponse<>(true, "Data successfully retrieved", studentResponse);
+        ApiResponse<StudentResponse> response = new ApiResponse<>(true, "Data successfully retrieved", studentResponse);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    public ApiResponse<List<Student>> search(String name, String nim, String classOf, String studyProgram, String interest, String sortBy, String order) {
+    public ResponseEntity<Object> search(String name, String nim, String classOf, String studyProgram, String interest, String sortBy, String order) {
         Sort sort = Sort.by(Sort.Order.by(sortBy).with(Sort.Direction.fromString(order)));
         List<Student> students = studentRepository.findAll(sort);
 
@@ -116,39 +122,47 @@ public class StudentService {
             ).toList();
         }
 
-        return new ApiResponse<>(true, "Data successfully retrieved", students);
+        ApiResponse<List<Student>> response = new ApiResponse<>(true, "Data successfully retrieved", students);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    public ApiResponse<List<CourseScheduleResponse>> getStudentCourseSchedule(String id) {
+    public ResponseEntity<Object> getStudentCourseSchedule(String id) {
         Student student = findStudentById(id);
         List<CourseScheduleResponse> courseSchedules = courseScheduleService.toListCourseScheduleResponse(student.getCourseSchedules());
 
-        return new ApiResponse<>(true, "Data successfully retrieved", courseSchedules);
+        ApiResponse<List<CourseScheduleResponse>> response = new ApiResponse<>(true, "Data successfully retrieved", courseSchedules);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    public ApiResponse<Student> create(Student student) {
+    public ResponseEntity<Object> create(Student student) {
         if (!isDuplicate(student)) {
             studentRepository.save(student);
         } else {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Student data already exists");
         }
-        return new ApiResponse<>(true, "Student data has been successfully added", student);
+
+        ApiResponse<Student> response = new ApiResponse<>(true, "Student data has been successfully added", student);
+        return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
-    public ApiResponse<Student> update(String id, Student student) {
+    public ResponseEntity<Object> update(String id, Student student) {
         findStudentById(id);
         if (canUpdate(id, student)) {
             student.setId(id);
         } else {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Student data already exists");
         }
-        return new ApiResponse<>(true, "Student data has been successfully updated", studentRepository.save(student));
+
+        ApiResponse<Student> response = new ApiResponse<>(true, "Student data has been successfully updated", studentRepository.save(student));
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    public ApiResponse<Student> delete(String id) {
+    public ResponseEntity<Object> delete(String id) {
         Student student = findStudentById(id);
         studentRepository.delete(student);
-        return new ApiResponse<>(true, "Student data has been successfully deleted", student);
+
+        ApiResponse<Student> response = new ApiResponse<>(true, "Student data has been successfully deleted", student);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     public List<Student> parseStudentDataFromExcel(InputStream is) {
@@ -226,12 +240,13 @@ public class StudentService {
         }
     }
 
-    public ApiResponse<List<Student>> importData(MultipartFile file) {
+    public ResponseEntity<Object> importData(MultipartFile file) {
         List<Student> students;
         try {
             students = parseStudentDataFromExcel(file.getInputStream());
             if (students.isEmpty()) {
-                return new ApiResponse<>(true, "Student data already exists or data is incomplete", students);
+                ApiResponse<List<Student>> response = new ApiResponse<>(true, "Student data already exists or data is incomplete", students);
+                return new ResponseEntity<>(response, HttpStatus.OK);
             }
 
             students.forEach(student -> {
@@ -242,7 +257,8 @@ public class StudentService {
                 }
             });
 
-            return new ApiResponse<>(true, "Student data has been successfully added", students);
+            ApiResponse<List<Student>> response = new ApiResponse<>(true, "Student data has been successfully added", students);
+            return new ResponseEntity<>(response, HttpStatus.CREATED);
         } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, e.getMessage());
         }
