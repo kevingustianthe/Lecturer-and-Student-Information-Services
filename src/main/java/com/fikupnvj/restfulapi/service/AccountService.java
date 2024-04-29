@@ -5,7 +5,6 @@ import com.fikupnvj.restfulapi.model.UpdateAccountRequest;
 import com.fikupnvj.restfulapi.model.AccountResponse;
 import com.fikupnvj.restfulapi.model.ApiResponse;
 import com.fikupnvj.restfulapi.repository.AccountRepository;
-import com.fikupnvj.restfulapi.tool.BCrypt;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
