@@ -20,11 +20,6 @@ public class AccountController {
         return accountService.getAll();
     }
 
-//    @GetMapping("/me")
-//    public ApiResponse<AccountResponse> getMe(@Parameter(hidden = true) Account account, @RequestHeader("X-API-TOKEN") String token) {
-//        return accountService.getMe(account);
-//    }
-
     @GetMapping("/{id}")
     public ResponseEntity<Object> getById(@Parameter(hidden = true) Account admin, @RequestHeader("X-API-TOKEN") String token, @PathVariable String id) {
         return accountService.getById(id);
@@ -39,11 +34,6 @@ public class AccountController {
                                          @RequestParam(name = "order", required = false, defaultValue = "asc") String order) {
         return accountService.search(email, role, status, sortBy, order);
     }
-
-//    @PostMapping("/update/me")
-//    public ApiResponse<AccountResponse> updateMe(@Parameter(hidden = true) Account account, @RequestHeader("X-API-TOKEN") String token, @RequestBody UpdateAccountRequest request) {
-//        return accountService.updateMe(account, request);
-//    }
 
     @PutMapping("/update/{id}")
     public ResponseEntity<Object> update(@Parameter(hidden = true) Account admin, @RequestHeader("X-API-TOKEN") String token, @PathVariable String id, @RequestBody UpdateAccountRequest request) {

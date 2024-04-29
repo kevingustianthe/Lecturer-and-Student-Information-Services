@@ -32,13 +32,6 @@ public class AccountService {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    public ResponseEntity<Object> getMe(Account account) {
-        AccountResponse accountResponse = toResponseAccount(account);
-
-        ApiResponse<AccountResponse> response = new ApiResponse<>(true, "Account successfully retrieved", accountResponse);
-        return new ResponseEntity<>(response, HttpStatus.OK);
-    }
-
     public ResponseEntity<Object> getById(String email) {
         Account acc = accountRepository.findById(email)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Account not found"));
@@ -72,17 +65,6 @@ public class AccountService {
         }
 
         ApiResponse<List<AccountResponse>> response = new ApiResponse<>(true, "Data successfully retrieved", toListAccountResponse(accounts));
-        return new ResponseEntity<>(response, HttpStatus.OK);
-    }
-
-    public ResponseEntity<Object> updateMe(Account account, UpdateAccountRequest request) {
-        if (Objects.nonNull(request.getPassword())) {
-            account.setPassword(BCrypt.hashpw(request.getPassword(), BCrypt.gensalt()));
-        }
-
-        accountRepository.save(account);
-
-        ApiResponse<AccountResponse> response = new ApiResponse<>(true, "Update successfully", toResponseAccount(account));
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
